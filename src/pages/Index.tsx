@@ -32,10 +32,19 @@ interface AboutItem {
   description: string;
 }
 
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  date: string;
+}
+
 interface AppData {
   products: Product[];
   services: Service[];
   about: AboutItem[];
+  articles: Article[];
 }
 
 const STORAGE_KEY = 'yasny-slukh-data';
@@ -51,14 +60,21 @@ const Index = () => {
   const [data, setData] = useState<AppData>({
     products: [],
     services: [],
-    about: []
+    about: [],
+    articles: []
   });
 
   const loadData = () => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        setData(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setData({
+          products: parsed.products || [],
+          services: parsed.services || [],
+          about: parsed.about || [],
+          articles: parsed.articles || []
+        });
       } catch (e) {
         console.error('Failed to parse data', e);
       }
@@ -114,25 +130,30 @@ const Index = () => {
     }
   };
 
+  const scrollItems = [...data.products, ...data.services];
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-card border-b-4 border-primary">
+      <header className="sticky top-0 z-50 bg-white border-b-4 border-primary shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
-            <h1 className="text-4xl font-bold text-primary tracking-wider">ЯСНЫЙ СЛУХ</h1>
+            <div className="flex items-center gap-3">
+              <img src="https://cdn.poehali.dev/files/76bd75c3-4d4d-4b91-a795-2a19bb4fd126.png" alt="Ясный слух" className="h-12 w-12" />
+              <h1 className="text-3xl font-black text-foreground tracking-tight">ЯСНЫЙ СЛУХ</h1>
+            </div>
             <nav className="hidden md:flex gap-6">
-              <button onClick={() => setActiveSection('home')} className={`text-lg font-semibold hover:text-primary transition ${activeSection === 'home' ? 'text-primary' : ''}`}>ГЛАВНАЯ</button>
-              <button onClick={() => setActiveSection('catalog')} className={`text-lg font-semibold hover:text-primary transition ${activeSection === 'catalog' ? 'text-primary' : ''}`}>КАТАЛОГ</button>
-              <button onClick={() => setActiveSection('services')} className={`text-lg font-semibold hover:text-primary transition ${activeSection === 'services' ? 'text-primary' : ''}`}>УСЛУГИ</button>
-              <button onClick={() => setActiveSection('about')} className={`text-lg font-semibold hover:text-primary transition ${activeSection === 'about' ? 'text-primary' : ''}`}>О КОМПАНИИ</button>
-              <button onClick={() => setActiveSection('articles')} className={`text-lg font-semibold hover:text-primary transition ${activeSection === 'articles' ? 'text-primary' : ''}`}>СТАТЬИ</button>
+              <button onClick={() => setActiveSection('home')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'home' ? 'text-primary' : 'text-foreground'}`}>ГЛАВНАЯ</button>
+              <button onClick={() => setActiveSection('catalog')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'catalog' ? 'text-primary' : 'text-foreground'}`}>КАТАЛОГ</button>
+              <button onClick={() => setActiveSection('services')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'services' ? 'text-primary' : 'text-foreground'}`}>УСЛУГИ</button>
+              <button onClick={() => setActiveSection('about')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'about' ? 'text-primary' : 'text-foreground'}`}>О КОМПАНИИ</button>
+              <button onClick={() => setActiveSection('articles')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'articles' ? 'text-primary' : 'text-foreground'}`}>СТАТЬИ</button>
             </nav>
             <div className="flex gap-2">
-              <Button onClick={() => setShowAppointmentDialog(true)} className="bg-primary hover:bg-primary/90 font-bold">
+              <Button onClick={() => setShowAppointmentDialog(true)} className="bg-primary hover:bg-primary/90 font-bold text-white">
                 <Icon name="Calendar" className="mr-2" size={18} />
                 ЗАПИСЬ НА ПРИЁМ
               </Button>
-              <Button onClick={() => setShowAdminDialog(true)} variant="outline" size="icon">
+              <Button onClick={() => setShowAdminDialog(true)} variant="outline" size="icon" className="border-2">
                 <Icon name="Settings" size={18} />
               </Button>
             </div>
@@ -140,13 +161,28 @@ const Index = () => {
         </div>
       </header>
 
+      {scrollItems.length > 0 && (
+        <div className="bg-foreground text-white py-3 overflow-hidden">
+          <div className="flex whitespace-nowrap animate-scroll">
+            {[...scrollItems, ...scrollItems].map((item, index) => (
+              <div key={index} className="inline-flex items-center mx-8">
+                <span className="text-lg font-bold">
+                  {'price' in item ? `${item.name} — ${item.price} ₽` : item.name}
+                </span>
+                <span className="mx-4 text-primary">●</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <main className="container mx-auto px-4 py-8">
         {activeSection === 'home' && (
           <div className="space-y-12">
             <section className="text-center py-20">
-              <h2 className="text-6xl font-bold mb-6">ВЕРНЁМ ВАМ МИР ЗВУКОВ</h2>
+              <h2 className="text-6xl font-black mb-6 text-foreground">ВЕРНЁМ ВАМ МИР ЗВУКОВ</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">Современные слуховые аппараты для комфортной жизни. Консультация специалистов и подбор устройств.</p>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg font-bold px-8" onClick={() => setActiveSection('catalog')}>
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-lg font-bold px-8" onClick={() => setActiveSection('catalog')}>
                 ПОСМОТРЕТЬ КАТАЛОГ
               </Button>
             </section>
@@ -155,16 +191,16 @@ const Index = () => {
 
         {activeSection === 'catalog' && (
           <div>
-            <h2 className="text-5xl font-bold mb-8 text-primary">КАТАЛОГ</h2>
+            <h2 className="text-5xl font-black mb-8 text-primary">КАТАЛОГ</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.products.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Товары отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover:border-primary transition">
+                  <Card key={product.id} className="overflow-hidden hover:border-primary transition border-2">
                     <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover" />
                     <CardHeader>
-                      <CardTitle className="text-2xl">{product.name}</CardTitle>
+                      <CardTitle className="text-2xl font-black">{product.name}</CardTitle>
                       <CardDescription className="text-primary text-xl font-bold">{product.price} ₽</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -172,7 +208,7 @@ const Index = () => {
                       <p className="text-xs text-muted-foreground">{product.specs}</p>
                     </CardContent>
                     <CardFooter>
-                      <Button className="w-full bg-primary hover:bg-primary/90 font-bold" onClick={() => setShowAppointmentDialog(true)}>
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" onClick={() => setShowAppointmentDialog(true)}>
                         ЗАКАЗАТЬ
                       </Button>
                     </CardFooter>
@@ -185,20 +221,20 @@ const Index = () => {
 
         {activeSection === 'services' && (
           <div>
-            <h2 className="text-5xl font-bold mb-8 text-primary">УСЛУГИ</h2>
+            <h2 className="text-5xl font-black mb-8 text-primary">УСЛУГИ</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {data.services.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Услуги отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.services.map((service) => (
-                  <Card key={service.id} className="hover:border-primary transition">
+                  <Card key={service.id} className="hover:border-primary transition border-2">
                     <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
                     <CardHeader>
-                      <CardTitle className="text-2xl">{service.name}</CardTitle>
+                      <CardTitle className="text-2xl font-black">{service.name}</CardTitle>
                       <CardDescription>{service.contact}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                      <Button className="w-full bg-primary hover:bg-primary/90 font-bold" asChild>
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" asChild>
                         <a href={service.link} target="_blank" rel="noopener noreferrer">ЗАПИСАТЬСЯ НА ПРИЁМ</a>
                       </Button>
                     </CardFooter>
@@ -211,15 +247,15 @@ const Index = () => {
 
         {activeSection === 'about' && (
           <div>
-            <h2 className="text-5xl font-bold mb-8 text-primary">О КОМПАНИИ</h2>
+            <h2 className="text-5xl font-black mb-8 text-primary">О КОМПАНИИ</h2>
             <div className="space-y-6">
               {data.about.length === 0 ? (
                 <p className="text-center text-muted-foreground py-12">Информация отсутствует. Добавьте её через админ-панель.</p>
               ) : (
                 data.about.map((item) => (
-                  <Card key={item.id}>
+                  <Card key={item.id} className="border-2">
                     <CardHeader>
-                      <CardTitle className="text-3xl">{item.title}</CardTitle>
+                      <CardTitle className="text-3xl font-black">{item.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground whitespace-pre-wrap">{item.description}</p>
@@ -233,36 +269,53 @@ const Index = () => {
 
         {activeSection === 'articles' && (
           <div>
-            <h2 className="text-5xl font-bold mb-8 text-primary">СТАТЬИ</h2>
-            <p className="text-center text-muted-foreground py-12">Раздел в разработке</p>
+            <h2 className="text-5xl font-black mb-8 text-primary">СТАТЬИ</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.articles.length === 0 ? (
+                <p className="col-span-full text-center text-muted-foreground py-12">Статьи отсутствуют. Добавьте их через админ-панель.</p>
+              ) : (
+                data.articles.map((article) => (
+                  <Card key={article.id} className="overflow-hidden hover:border-primary transition border-2">
+                    {article.imageUrl && <img src={article.imageUrl} alt={article.title} className="w-full h-48 object-cover" />}
+                    <CardHeader>
+                      <CardTitle className="text-xl font-black">{article.title}</CardTitle>
+                      <CardDescription className="text-xs">{article.date}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
           </div>
         )}
       </main>
 
-      <footer className="bg-card border-t-4 border-primary mt-20">
+      <footer className="bg-secondary border-t-4 border-primary mt-20">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-2xl font-bold text-primary mb-4">ДОСТАВКА</h3>
+              <h3 className="text-2xl font-black text-primary mb-4">ДОСТАВКА</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Icon name="Package" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Самовывоз</p>
+                    <p className="font-bold">Самовывоз</p>
                     <p className="text-sm text-muted-foreground">Бесплатно из центра слухопротезирования</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="Truck" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Курьер по Москве</p>
+                    <p className="font-bold">Курьер по Москве</p>
                     <p className="text-sm text-muted-foreground">1-2 рабочих дня, 300 ₽</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="MapPin" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Почта России</p>
+                    <p className="font-bold">Почта России</p>
                     <p className="text-sm text-muted-foreground">5-14 рабочих дней, от 350 ₽</p>
                   </div>
                 </div>
@@ -270,26 +323,26 @@ const Index = () => {
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-primary mb-4">ОПЛАТА</h3>
+              <h3 className="text-2xl font-black text-primary mb-4">ОПЛАТА</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Icon name="CreditCard" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Банковской картой</p>
+                    <p className="font-bold">Банковской картой</p>
                     <p className="text-sm text-muted-foreground">Visa, MasterCard, МИР</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="Banknote" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Наличными</p>
+                    <p className="font-bold">Наличными</p>
                     <p className="text-sm text-muted-foreground">При получении в центре</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="FileText" className="text-primary mt-1" size={20} />
                   <div>
-                    <p className="font-semibold">Электронные сертификаты</p>
+                    <p className="font-bold">Электронные сертификаты</p>
                     <p className="text-sm text-muted-foreground">ГЭР, СФР</p>
                   </div>
                 </div>
@@ -297,7 +350,7 @@ const Index = () => {
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-primary mb-4">КОНТАКТЫ</h3>
+              <h3 className="text-2xl font-black text-primary mb-4">КОНТАКТЫ</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Icon name="MapPin" className="text-primary mt-1" size={20} />
@@ -327,7 +380,7 @@ const Index = () => {
       <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-3xl">ЗАПИСЬ НА ПРИЁМ</DialogTitle>
+            <DialogTitle className="text-3xl font-black">ЗАПИСЬ НА ПРИЁМ</DialogTitle>
             <DialogDescription>Выберите удобный способ связи</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -343,7 +396,7 @@ const Index = () => {
                 WhatsApp
               </a>
             </Button>
-            <Button className="w-full bg-primary hover:bg-primary/90 font-bold" asChild>
+            <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" asChild>
               <a href="tel:+74957990926">
                 <Icon name="Phone" className="mr-2" size={20} />
                 Позвонить
@@ -356,7 +409,7 @@ const Index = () => {
       <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-3xl">АДМИН-ПАНЕЛЬ</DialogTitle>
+            <DialogTitle className="text-3xl font-black">АДМИН-ПАНЕЛЬ</DialogTitle>
           </DialogHeader>
           {!isAdminAuthed ? (
             <div className="space-y-4">
@@ -368,7 +421,7 @@ const Index = () => {
                 onChange={(e) => setAdminPassword(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
               />
-              <Button onClick={handleAdminLogin} className="w-full bg-primary hover:bg-primary/90 font-bold">ВОЙТИ</Button>
+              <Button onClick={handleAdminLogin} className="w-full bg-primary hover:bg-primary/90 text-white font-bold">ВОЙТИ</Button>
             </div>
           ) : (
             <AdminPanel data={data} onSave={saveData} onExport={handleExport} onImport={handleImport} />
@@ -399,7 +452,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
     onSave({ ...data, products: [...data.products, newProduct] });
   };
 
-  const updateProduct = (id: string, field: keyof Product, value: any) => {
+  const updateProduct = (id: string, field: keyof Product, value: string | number) => {
     const updated = data.products.map(p => p.id === id ? { ...p, [field]: value } : p);
     onSave({ ...data, products: updated });
   };
@@ -419,7 +472,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
     onSave({ ...data, services: [...data.services, newService] });
   };
 
-  const updateService = (id: string, field: keyof Service, value: any) => {
+  const updateService = (id: string, field: keyof Service, value: string) => {
     const updated = data.services.map(s => s.id === id ? { ...s, [field]: value } : s);
     onSave({ ...data, services: updated });
   };
@@ -437,7 +490,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
     onSave({ ...data, about: [...data.about, newAbout] });
   };
 
-  const updateAbout = (id: string, field: keyof AboutItem, value: any) => {
+  const updateAbout = (id: string, field: keyof AboutItem, value: string) => {
     const updated = data.about.map(a => a.id === id ? { ...a, [field]: value } : a);
     onSave({ ...data, about: updated });
   };
@@ -446,22 +499,43 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
     onSave({ ...data, about: data.about.filter(a => a.id !== id) });
   };
 
+  const addArticle = () => {
+    const newArticle: Article = {
+      id: Date.now().toString(),
+      title: '',
+      content: '',
+      imageUrl: '',
+      date: new Date().toLocaleDateString('ru-RU')
+    };
+    onSave({ ...data, articles: [...data.articles, newArticle] });
+  };
+
+  const updateArticle = (id: string, field: keyof Article, value: string) => {
+    const updated = data.articles.map(a => a.id === id ? { ...a, [field]: value } : a);
+    onSave({ ...data, articles: updated });
+  };
+
+  const deleteArticle = (id: string) => {
+    onSave({ ...data, articles: data.articles.filter(a => a.id !== id) });
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="catalog">Каталог</TabsTrigger>
         <TabsTrigger value="services">Услуги</TabsTrigger>
         <TabsTrigger value="about">О компании</TabsTrigger>
+        <TabsTrigger value="articles">Статьи</TabsTrigger>
         <TabsTrigger value="data">Данные</TabsTrigger>
       </TabsList>
 
       <TabsContent value="catalog" className="space-y-4">
-        <Button onClick={addProduct} className="bg-primary hover:bg-primary/90 font-bold">
+        <Button onClick={addProduct} className="bg-primary hover:bg-primary/90 text-white font-bold">
           <Icon name="Plus" className="mr-2" size={16} />
           Добавить товар
         </Button>
         {data.products.map((product) => (
-          <Card key={product.id}>
+          <Card key={product.id} className="border-2">
             <CardContent className="pt-6 space-y-3">
               <div>
                 <Label>Название</Label>
@@ -493,12 +567,12 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
       </TabsContent>
 
       <TabsContent value="services" className="space-y-4">
-        <Button onClick={addService} className="bg-primary hover:bg-primary/90 font-bold">
+        <Button onClick={addService} className="bg-primary hover:bg-primary/90 text-white font-bold">
           <Icon name="Plus" className="mr-2" size={16} />
           Добавить услугу
         </Button>
         {data.services.map((service) => (
-          <Card key={service.id}>
+          <Card key={service.id} className="border-2">
             <CardContent className="pt-6 space-y-3">
               <div>
                 <Label>Название</Label>
@@ -526,12 +600,12 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
       </TabsContent>
 
       <TabsContent value="about" className="space-y-4">
-        <Button onClick={addAbout} className="bg-primary hover:bg-primary/90 font-bold">
+        <Button onClick={addAbout} className="bg-primary hover:bg-primary/90 text-white font-bold">
           <Icon name="Plus" className="mr-2" size={16} />
           Добавить раздел
         </Button>
         {data.about.map((item) => (
-          <Card key={item.id}>
+          <Card key={item.id} className="border-2">
             <CardContent className="pt-6 space-y-3">
               <div>
                 <Label>Название</Label>
@@ -550,9 +624,42 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
         ))}
       </TabsContent>
 
+      <TabsContent value="articles" className="space-y-4">
+        <Button onClick={addArticle} className="bg-primary hover:bg-primary/90 text-white font-bold">
+          <Icon name="Plus" className="mr-2" size={16} />
+          Добавить статью
+        </Button>
+        {data.articles.map((article) => (
+          <Card key={article.id} className="border-2">
+            <CardContent className="pt-6 space-y-3">
+              <div>
+                <Label>Название</Label>
+                <Input value={article.title} onChange={(e) => updateArticle(article.id, 'title', e.target.value)} />
+              </div>
+              <div>
+                <Label>URL картинки (опционально)</Label>
+                <Input value={article.imageUrl} onChange={(e) => updateArticle(article.id, 'imageUrl', e.target.value)} />
+              </div>
+              <div>
+                <Label>Дата</Label>
+                <Input value={article.date} onChange={(e) => updateArticle(article.id, 'date', e.target.value)} />
+              </div>
+              <div>
+                <Label>Содержание</Label>
+                <Textarea value={article.content} onChange={(e) => updateArticle(article.id, 'content', e.target.value)} rows={8} />
+              </div>
+              <Button variant="destructive" onClick={() => deleteArticle(article.id)}>
+                <Icon name="Trash2" className="mr-2" size={16} />
+                Удалить
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </TabsContent>
+
       <TabsContent value="data" className="space-y-4">
         <div className="space-y-3">
-          <Button onClick={onExport} className="w-full bg-primary hover:bg-primary/90 font-bold">
+          <Button onClick={onExport} className="w-full bg-primary hover:bg-primary/90 text-white font-bold">
             <Icon name="Download" className="mr-2" size={16} />
             Экспортировать данные
           </Button>
