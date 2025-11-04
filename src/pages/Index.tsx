@@ -256,8 +256,11 @@ const Index = () => {
                       </CardContent>
                     )}
                     <CardFooter>
-                      <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" asChild>
-                        <a href={service.link} target="_blank" rel="noopener noreferrer">ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ</a>
+                      <Button 
+                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold" 
+                        onClick={() => setShowAppointmentDialog(true)}
+                      >
+                        ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ
                       </Button>
                     </CardFooter>
                   </Card>
@@ -399,32 +402,46 @@ const Index = () => {
               </div>
             </div>
           </div>
+          <div className="border-t border-primary/20 mt-8 pt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              © 2025 Ясный слух. Все права защищены
+            </p>
+          </div>
         </div>
       </footer>
 
       <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-3xl font-black">ЗАПИСЬ НА КОНСУЛЬТАЦИЮ</DialogTitle>
-            <DialogDescription>Выберите удобный способ связи</DialogDescription>
+            <DialogTitle className="text-3xl font-black text-center">ЗАПИСЬ НА КОНСУЛЬТАЦИЮ</DialogTitle>
+            <DialogDescription className="text-center">Свяжитесь с нами удобным способом</DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <Button className="w-full bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-bold" asChild>
-              <a href="https://t.me/+79629102391" target="_blank" rel="noopener noreferrer">
-                <Icon name="Send" className="mr-2" size={20} />
-                Telegram
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <Button size="lg" className="bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-bold h-14" asChild>
+              <a href="https://t.me/+79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                <Icon name="Send" className="mr-3" size={24} />
+                <div className="text-left">
+                  <div className="text-base font-bold">Написать в Telegram</div>
+                  <div className="text-xs opacity-90">+7 (962) 910-23-91</div>
+                </div>
               </a>
             </Button>
-            <Button className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold" asChild>
-              <a href="https://wa.me/79629102391" target="_blank" rel="noopener noreferrer">
-                <Icon name="MessageCircle" className="mr-2" size={20} />
-                WhatsApp
+            <Button size="lg" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold h-14" asChild>
+              <a href="https://wa.me/79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                <Icon name="MessageCircle" className="mr-3" size={24} />
+                <div className="text-left">
+                  <div className="text-base font-bold">Написать в WhatsApp</div>
+                  <div className="text-xs opacity-90">+7 (962) 910-23-91</div>
+                </div>
               </a>
             </Button>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" asChild>
-              <a href="tel:+74957990926">
-                <Icon name="Phone" className="mr-2" size={20} />
-                Позвонить
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-bold h-14" asChild>
+              <a href="tel:+74957990926" className="flex items-center justify-center">
+                <Icon name="Phone" className="mr-3" size={24} />
+                <div className="text-left">
+                  <div className="text-base font-bold">Позвонить</div>
+                  <div className="text-xs opacity-90">+7 (495) 799-09-26</div>
+                </div>
               </a>
             </Button>
           </div>
