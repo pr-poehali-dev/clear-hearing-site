@@ -417,30 +417,30 @@ const Index = () => {
             <DialogDescription className="text-center">Свяжитесь с нами удобным способом</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-4 py-4">
-            <Button size="lg" className="bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-bold h-14" asChild>
-              <a href="https://t.me/+79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                <Icon name="Send" className="mr-3" size={24} />
-                <div className="text-left">
-                  <div className="text-base font-bold">Написать в Telegram</div>
-                  <div className="text-xs opacity-90">+7 (962) 910-23-91</div>
+            <Button size="lg" className="bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-bold h-16 justify-start" asChild>
+              <a href="https://t.me/+79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <Icon name="Send" className="mr-4 flex-shrink-0" size={24} />
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-base font-bold">Написать в Telegram</span>
+                  <span className="text-sm opacity-90">+7 (962) 910-23-91</span>
                 </div>
               </a>
             </Button>
-            <Button size="lg" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold h-14" asChild>
-              <a href="https://wa.me/79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                <Icon name="MessageCircle" className="mr-3" size={24} />
-                <div className="text-left">
-                  <div className="text-base font-bold">Написать в WhatsApp</div>
-                  <div className="text-xs opacity-90">+7 (962) 910-23-91</div>
+            <Button size="lg" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold h-16 justify-start" asChild>
+              <a href="https://wa.me/79629102391" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <Icon name="MessageCircle" className="mr-4 flex-shrink-0" size={24} />
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-base font-bold">Написать в WhatsApp</span>
+                  <span className="text-sm opacity-90">+7 (962) 910-23-91</span>
                 </div>
               </a>
             </Button>
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-bold h-14" asChild>
-              <a href="tel:+74957990926" className="flex items-center justify-center">
-                <Icon name="Phone" className="mr-3" size={24} />
-                <div className="text-left">
-                  <div className="text-base font-bold">Позвонить</div>
-                  <div className="text-xs opacity-90">+7 (495) 799-09-26</div>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-bold h-16 justify-start" asChild>
+              <a href="tel:+74957990926" className="flex items-center">
+                <Icon name="Phone" className="mr-4 flex-shrink-0" size={24} />
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-base font-bold">Позвонить</span>
+                  <span className="text-sm opacity-90">+7 (495) 799-09-26</span>
                 </div>
               </a>
             </Button>
