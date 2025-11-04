@@ -9,74 +9,74 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    --card: 222 47% 15%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 222 47% 15%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 17 88% 54%;
+    --primary: 187 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 222 47% 15%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 17 88% 54%;
+    --accent: 187 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 47% 25%;
-    --input: 222 47% 25%;
-    --ring: 17 88% 54%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 187 100% 50%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 222 47% 15%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 17 88% 54%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 187 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 17 88% 54%;
+    --sidebar-accent: 187 100% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 222 47% 25%;
-    --sidebar-ring: 17 88% 54%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 187 100% 50%;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 0 0% 100%;
-    --card: 222 47% 15%;
-    --card-foreground: 0 0% 100%;
-    --popover: 222 47% 15%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 17 88% 54%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 187 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 222 47% 15%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 17 88% 54%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 187 100% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 47% 25%;
-    --input: 222 47% 25%;
-    --ring: 17 88% 54%;
-    --sidebar-background: 222 47% 15%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 17 88% 54%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 187 100% 50%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 187 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 17 88% 54%;
+    --sidebar-accent: 187 100% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 222 47% 25%;
-    --sidebar-ring: 17 88% 54%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 187 100% 50%;
   }
 }
 
@@ -111,71 +111,6 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 .animate-scroll {
   animation: scroll 30s linear infinite;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-slide-in {
-  animation: slideIn 0.5s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.4s ease-out forwards;
-}
-
-.stagger-1 {
-  animation-delay: 0.1s;
-}
-
-.stagger-2 {
-  animation-delay: 0.2s;
-}
-
-.stagger-3 {
-  animation-delay: 0.3s;
-}
-
-.stagger-4 {
-  animation-delay: 0.4s;
-}
-
-.stagger-5 {
-  animation-delay: 0.5s;
 }
