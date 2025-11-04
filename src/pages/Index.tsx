@@ -178,7 +178,7 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-8">
         {activeSection === 'home' && (
-          <div className="space-y-12">
+          <div className="space-y-12 section-transition">
             <section className="text-center py-20">
               <h2 className="text-6xl font-black mb-6 text-foreground">ВЕРНЁМ ВАМ МИР ЗВУКОВ</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">Современные слуховые аппараты для комфортной жизни. Консультация специалистов и подбор устройств.</p>
@@ -190,14 +190,14 @@ const Index = () => {
         )}
 
         {activeSection === 'catalog' && (
-          <div>
-            <h2 className="text-5xl font-black mb-8 text-primary">КАТАЛОГ</h2>
+          <div className="section-transition">
+            <h2 className="text-5xl font-black mb-8 text-primary title-transition">КАТАЛОГ</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.products.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Товары отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover:border-primary transition border-2">
+                  <Card key={product.id} className="overflow-hidden hover:border-primary transition border-2 card-transition">
                     <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover" />
                     <CardHeader>
                       <CardTitle className="text-2xl font-black">{product.name}</CardTitle>
@@ -220,14 +220,14 @@ const Index = () => {
         )}
 
         {activeSection === 'services' && (
-          <div>
-            <h2 className="text-5xl font-black mb-8 text-primary">УСЛУГИ</h2>
+          <div className="section-transition">
+            <h2 className="text-5xl font-black mb-8 text-primary title-transition">УСЛУГИ</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {data.services.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Услуги отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.services.map((service) => (
-                  <Card key={service.id} className="hover:border-primary transition border-2">
+                  <Card key={service.id} className="hover:border-primary transition border-2 card-transition">
                     <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
                     <CardHeader>
                       <CardTitle className="text-2xl font-black">{service.name}</CardTitle>
@@ -246,14 +246,14 @@ const Index = () => {
         )}
 
         {activeSection === 'about' && (
-          <div>
-            <h2 className="text-5xl font-black mb-8 text-primary">О КОМПАНИИ</h2>
+          <div className="section-transition">
+            <h2 className="text-5xl font-black mb-8 text-primary title-transition">О КОМПАНИИ</h2>
             <div className="space-y-6">
               {data.about.length === 0 ? (
                 <p className="text-center text-muted-foreground py-12">Информация отсутствует. Добавьте её через админ-панель.</p>
               ) : (
                 data.about.map((item) => (
-                  <Card key={item.id} className="border-2">
+                  <Card key={item.id} className="border-2 card-transition">
                     <CardHeader>
                       <CardTitle className="text-3xl font-black">{item.title}</CardTitle>
                     </CardHeader>
@@ -268,14 +268,14 @@ const Index = () => {
         )}
 
         {activeSection === 'articles' && (
-          <div>
-            <h2 className="text-5xl font-black mb-8 text-primary">СТАТЬИ</h2>
+          <div className="section-transition">
+            <h2 className="text-5xl font-black mb-8 text-primary title-transition">СТАТЬИ</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.articles.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Статьи отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.articles.map((article) => (
-                  <Card key={article.id} className="overflow-hidden hover:border-primary transition border-2">
+                  <Card key={article.id} className="overflow-hidden hover:border-primary transition border-2 card-transition">
                     {article.imageUrl && <img src={article.imageUrl} alt={article.title} className="w-full h-48 object-cover" />}
                     <CardHeader>
                       <CardTitle className="text-xl font-black">{article.title}</CardTitle>
