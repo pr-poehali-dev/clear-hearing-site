@@ -115,8 +115,7 @@ const Index = () => {
   const defaultCategories: Category[] = [
     { id: '1', name: 'Заушные аппараты', icon: 'Ear' },
     { id: '2', name: 'Внутриушные аппараты', icon: 'Radio' },
-    { id: '3', name: 'Аксессуары', icon: 'Cable' },
-    { id: '4', name: 'Батарейки', icon: 'Battery' }
+    { id: '3', name: 'Аксессуары', icon: 'Cable' }
   ];
 
   const [data, setData] = useState<AppData>({
