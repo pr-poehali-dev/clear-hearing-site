@@ -220,6 +220,130 @@ const Index = () => {
                 </Button>
               </div>
             </section>
+
+            <section className="py-12 md:py-20 bg-secondary/30 rounded-3xl">
+              <div className="container mx-auto px-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-center mb-4 title-transition">
+                  ОТКРОЙТЕ ДЛЯ СЕБЯ <span className="text-primary">МИР ЧЕТКОГО ЗВУКА</span><br />С НАШИМИ РЕШЕНИЯМИ!
+                </h2>
+                <p className="text-center text-base md:text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
+                  Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="UserCheck" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Индивидуальный подбор</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Подбираем аппарат с учетом особенностей слуха, образа жизни и бюджета
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="Settings" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Профессиональная настройка</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Настраиваем аппарат под индивидуальные параметры вашего слуха
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="Volume2" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Проверка слуха</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Проводим тест слуха для точного определения потери слуха
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="Shield" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Гарантийное обслуживание</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Обеспечиваем сервисное обслуживание на весь гарантийный срок
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="Headphones" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Поддержка клиентов</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Отвечаем на вопросы и помогаем в процессе привыкания к аппарату
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 hover:border-primary transition card-transition">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon name="Sparkles" className="text-primary" size={24} />
+                      </div>
+                      <CardTitle className="text-xl font-black">Современные технологии</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Используем новейшие достижения в области аудиологии
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-center mb-4 title-transition">
+                    РАБОТАЕМ С <span className="text-primary">ВЕДУЩИМИ ПРОИЗВОДИТЕЛЯМИ</span>
+                  </h3>
+                  <p className="text-center text-base md:text-lg text-muted-foreground mb-8">
+                    Представляем слуховые аппараты от мировых лидеров в области аудиологии
+                  </p>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
+                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Oticon_logo.svg/320px-Oticon_logo.svg.png" alt="Oticon" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                    </div>
+                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Phonak_logo.svg/320px-Phonak_logo.svg.png" alt="Phonak" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                    </div>
+                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
+                      <img src="https://www.signia-hearing.com/globalassets/signia/shared-components/shared-header/signia_logo.svg" alt="Signia" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                    </div>
+                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
+                      <img src="https://www.resound.com/SiteCollectionImages/ReSound_logo.png" alt="ReSound" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                    </div>
+                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition col-span-2 md:col-span-1">
+                      <img src="https://www.widex.com/media/images/logo.svg" alt="Widex" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         )}
 
