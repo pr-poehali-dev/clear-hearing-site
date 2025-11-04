@@ -24,6 +24,7 @@ interface Service {
   imageUrl: string;
   contact: string;
   link: string;
+  description?: string;
 }
 
 interface AboutItem {
@@ -54,6 +55,7 @@ const Index = () => {
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState<'home' | 'catalog' | 'services' | 'about' | 'articles'>('home');
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showAdminDialog, setShowAdminDialog] = useState(false);
   const [isAdminAuthed, setIsAdminAuthed] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -151,7 +153,7 @@ const Index = () => {
             <div className="flex gap-2">
               <Button onClick={() => setShowAppointmentDialog(true)} className="bg-primary hover:bg-primary/90 font-bold text-white">
                 <Icon name="Calendar" className="mr-2" size={18} />
-                ЗАПИСЬ НА ПРИЁМ
+                ЗАПИСЬ НА КОНСУЛЬТАЦИЮ
               </Button>
               <Button onClick={() => setShowAdminDialog(true)} variant="outline" size="icon" className="border-2">
                 <Icon name="Settings" size={18} />
@@ -182,9 +184,24 @@ const Index = () => {
             <section className="text-center py-20">
               <h2 className="text-6xl font-black mb-6 text-foreground">ВЕРНЁМ ВАМ МИР ЗВУКОВ</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">Современные слуховые аппараты для комфортной жизни. Консультация специалистов и подбор устройств.</p>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-lg font-bold px-8" onClick={() => setActiveSection('catalog')}>
-                ПОСМОТРЕТЬ КАТАЛОГ
-              </Button>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-lg font-bold px-8" onClick={() => setActiveSection('catalog')}>
+                  <Icon name="Package" className="mr-2" size={20} />
+                  ПОСМОТРЕТЬ КАТАЛОГ
+                </Button>
+                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-lg font-bold px-8" onClick={() => setActiveSection('services')}>
+                  <Icon name="Briefcase" className="mr-2" size={20} />
+                  НАШИ УСЛУГИ
+                </Button>
+                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-lg font-bold px-8" onClick={() => setActiveSection('about')}>
+                  <Icon name="Info" className="mr-2" size={20} />
+                  О КОМПАНИИ
+                </Button>
+                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-lg font-bold px-8" onClick={() => setActiveSection('articles')}>
+                  <Icon name="BookOpen" className="mr-2" size={20} />
+                  СТАТЬИ
+                </Button>
+              </div>
             </section>
           </div>
         )}
@@ -233,9 +250,14 @@ const Index = () => {
                       <CardTitle className="text-2xl font-black">{service.name}</CardTitle>
                       <CardDescription>{service.contact}</CardDescription>
                     </CardHeader>
+                    {service.description && (
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground">{service.description}</p>
+                      </CardContent>
+                    )}
                     <CardFooter>
                       <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" asChild>
-                        <a href={service.link} target="_blank" rel="noopener noreferrer">ЗАПИСАТЬСЯ НА ПРИЁМ</a>
+                        <a href={service.link} target="_blank" rel="noopener noreferrer">ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ</a>
                       </Button>
                     </CardFooter>
                   </Card>
@@ -275,7 +297,7 @@ const Index = () => {
                 <p className="col-span-full text-center text-muted-foreground py-12">Статьи отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
                 data.articles.map((article) => (
-                  <Card key={article.id} className="overflow-hidden hover:border-primary transition border-2 card-transition">
+                  <Card key={article.id} className="overflow-hidden hover:border-primary transition border-2 card-transition cursor-pointer" onClick={() => setSelectedArticle(article)}>
                     {article.imageUrl && <img src={article.imageUrl} alt={article.title} className="w-full h-48 object-cover" />}
                     <CardHeader>
                       <CardTitle className="text-xl font-black">{article.title}</CardTitle>
@@ -283,6 +305,9 @@ const Index = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
+                      <Button variant="link" className="text-primary font-bold p-0 mt-2">
+                        Читать далее →
+                      </Button>
                     </CardContent>
                   </Card>
                 ))
@@ -380,7 +405,7 @@ const Index = () => {
       <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-3xl font-black">ЗАПИСЬ НА ПРИЁМ</DialogTitle>
+            <DialogTitle className="text-3xl font-black">ЗАПИСЬ НА КОНСУЛЬТАЦИЮ</DialogTitle>
             <DialogDescription>Выберите удобный способ связи</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -425,6 +450,25 @@ const Index = () => {
             </div>
           ) : (
             <AdminPanel data={data} onSave={saveData} onExport={handleExport} onImport={handleImport} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={selectedArticle !== null} onOpenChange={() => setSelectedArticle(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          {selectedArticle && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-3xl font-black">{selectedArticle.title}</DialogTitle>
+                <DialogDescription>{selectedArticle.date}</DialogDescription>
+              </DialogHeader>
+              {selectedArticle.imageUrl && (
+                <img src={selectedArticle.imageUrl} alt={selectedArticle.title} className="w-full h-64 object-cover rounded-lg" />
+              )}
+              <div className="prose max-w-none">
+                <p className="text-base text-foreground whitespace-pre-wrap">{selectedArticle.content}</p>
+              </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
@@ -585,6 +629,10 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
               <div>
                 <Label>Контакты</Label>
                 <Input value={service.contact} onChange={(e) => updateService(service.id, 'contact', e.target.value)} />
+              </div>
+              <div>
+                <Label>Описание услуги</Label>
+                <Textarea value={service.description || ''} onChange={(e) => updateService(service.id, 'description', e.target.value)} rows={3} />
               </div>
               <div>
                 <Label>Ссылка</Label>
