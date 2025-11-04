@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -41,11 +41,34 @@ interface Article {
   date: string;
 }
 
+interface Advantage {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Partner {
+  id: string;
+  name: string;
+  logoUrl: string;
+}
+
+interface HeroContent {
+  title: string;
+  subtitle: string;
+  highlightedText: string;
+  description: string;
+}
+
 interface AppData {
   products: Product[];
   services: Service[];
   about: AboutItem[];
   articles: Article[];
+  advantages: Advantage[];
+  partners: Partner[];
+  hero: HeroContent;
 }
 
 const STORAGE_KEY = 'yasny-slukh-data';
@@ -60,11 +83,38 @@ const Index = () => {
   const [showAdminDialog, setShowAdminDialog] = useState(false);
   const [isAdminAuthed, setIsAdminAuthed] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
+  const [isAdvantagesVisible, setIsAdvantagesVisible] = useState(false);
+  const advantagesRef = useRef<HTMLDivElement>(null);
+  const defaultAdvantages: Advantage[] = [
+    { id: '1', icon: 'UserCheck', title: 'Индивидуальный подбор', description: 'Подбираем аппарат с учетом особенностей слуха, образа жизни и бюджета' },
+    { id: '2', icon: 'Settings', title: 'Профессиональная настройка', description: 'Настраиваем аппарат под индивидуальные параметры вашего слуха' },
+    { id: '3', icon: 'Volume2', title: 'Проверка слуха', description: 'Проводим тест слуха для точного определения потери слуха' },
+    { id: '4', icon: 'Shield', title: 'Гарантийное обслуживание', description: 'Обеспечиваем сервисное обслуживание на весь гарантийный срок' },
+    { id: '5', icon: 'Headphones', title: 'Поддержка клиентов', description: 'Отвечаем на вопросы и помогаем в процессе привыкания к аппарату' },
+    { id: '6', icon: 'Sparkles', title: 'Современные технологии', description: 'Используем новейшие достижения в области аудиологии' }
+  ];
+
+  const defaultPartners: Partner[] = [
+    { id: '1', name: 'Oticon', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Oticon_logo.svg/320px-Oticon_logo.svg.png' },
+    { id: '2', name: 'Phonak', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Phonak_logo.svg/320px-Phonak_logo.svg.png' },
+    { id: '3', name: 'Signia', logoUrl: 'https://www.signia-hearing.com/globalassets/signia/shared-components/shared-header/signia_logo.svg' },
+    { id: '4', name: 'ReSound', logoUrl: 'https://www.resound.com/SiteCollectionImages/ReSound_logo.png' },
+    { id: '5', name: 'Widex', logoUrl: 'https://www.widex.com/media/images/logo.svg' }
+  ];
+
   const [data, setData] = useState<AppData>({
     products: [],
     services: [],
     about: [],
-    articles: []
+    articles: [],
+    advantages: defaultAdvantages,
+    partners: defaultPartners,
+    hero: {
+      title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+      highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+      subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+      description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+    }
   });
 
   const loadData = () => {
@@ -76,7 +126,15 @@ const Index = () => {
           products: parsed.products || [],
           services: parsed.services || [],
           about: parsed.about || [],
-          articles: parsed.articles || []
+          articles: parsed.articles || [],
+          advantages: parsed.advantages || defaultAdvantages,
+          partners: parsed.partners || defaultPartners,
+          hero: parsed.hero || {
+            title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+            highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+            subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+            description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+          }
         });
       } catch (e) {
         console.error('Failed to parse data', e);
@@ -94,6 +152,30 @@ const Index = () => {
     const interval = setInterval(loadData, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsAdvantagesVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = advantagesRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [activeSection]);
 
   const handleAdminLogin = () => {
     if (adminPassword === ADMIN_PASSWORD) {
@@ -199,8 +281,8 @@ const Index = () => {
         {activeSection === 'home' && (
           <div className="space-y-8 md:space-y-12 section-transition">
             <section className="text-center py-10 md:py-20">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground px-2">ВЕРНЁМ ВАМ МИР ЗВУКОВ</h2>
-              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">Современные слуховые аппараты для комфортной жизни. Консультация специалистов и подбор устройств.</p>
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground px-2">{data.hero.title} <span className="text-primary">{data.hero.highlightedText}</span> {data.hero.subtitle}</h2>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">{data.hero.description}</p>
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('catalog')}>
                   <Icon name="Package" className="mr-2" size={20} />
@@ -221,7 +303,7 @@ const Index = () => {
               </div>
             </section>
 
-            <section className="py-12 md:py-20 bg-secondary/30 rounded-3xl">
+            <section ref={advantagesRef} className={`py-12 md:py-20 bg-secondary/30 rounded-3xl scroll-fade-in ${isAdvantagesVisible ? 'visible' : ''}`}>
               <div className="container mx-auto px-4">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-center mb-4 title-transition">
                   ОТКРОЙТЕ ДЛЯ СЕБЯ <span className="text-primary">МИР ЧЕТКОГО ЗВУКА</span><br />С НАШИМИ РЕШЕНИЯМИ!
@@ -230,91 +312,25 @@ const Index = () => {
                   Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой
                 </p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="UserCheck" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Индивидуальный подбор</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Подбираем аппарат с учетом особенностей слуха, образа жизни и бюджета
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="Settings" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Профессиональная настройка</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Настраиваем аппарат под индивидуальные параметры вашего слуха
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="Volume2" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Проверка слуха</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Проводим тест слуха для точного определения потери слуха
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="Shield" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Гарантийное обслуживание</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Обеспечиваем сервисное обслуживание на весь гарантийный срок
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="Headphones" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Поддержка клиентов</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Отвечаем на вопросы и помогаем в процессе привыкания к аппарату
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 hover:border-primary transition card-transition">
-                    <CardHeader>
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon name="Sparkles" className="text-primary" size={24} />
-                      </div>
-                      <CardTitle className="text-xl font-black">Современные технологии</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Используем новейшие достижения в области аудиологии
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {data.advantages.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                    {data.advantages.map((advantage) => (
+                      <Card key={advantage.id} className="border-2 hover:border-primary transition card-transition">
+                        <CardHeader>
+                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                            <Icon name={advantage.icon as any} className="text-primary" size={24} fallback="Star" />
+                          </div>
+                          <CardTitle className="text-xl font-black">{advantage.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">{advantage.description}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground mb-16">Преимущества отсутствуют. Добавьте их через админ-панель.</p>
+                )}
 
                 <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20">
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-center mb-4 title-transition">
@@ -324,23 +340,17 @@ const Index = () => {
                     Представляем слуховые аппараты от мировых лидеров в области аудиологии
                   </p>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Oticon_logo.svg/320px-Oticon_logo.svg.png" alt="Oticon" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                  {data.partners.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
+                      {data.partners.map((partner) => (
+                        <div key={partner.id} className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
+                          <img src={partner.logoUrl} alt={partner.name} className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Phonak_logo.svg/320px-Phonak_logo.svg.png" alt="Phonak" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
-                    </div>
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
-                      <img src="https://www.signia-hearing.com/globalassets/signia/shared-components/shared-header/signia_logo.svg" alt="Signia" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
-                    </div>
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition">
-                      <img src="https://www.resound.com/SiteCollectionImages/ReSound_logo.png" alt="ReSound" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
-                    </div>
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-lg transition col-span-2 md:col-span-1">
-                      <img src="https://www.widex.com/media/images/logo.svg" alt="Widex" className="max-h-12 w-auto grayscale hover:grayscale-0 transition" />
-                    </div>
-                  </div>
+                  ) : (
+                    <p className="text-center text-muted-foreground">Партнёры отсутствуют. Добавьте их через админ-панель.</p>
+                  )}
                 </div>
               </div>
             </section>
@@ -721,15 +731,141 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
     onSave({ ...data, articles: data.articles.filter(a => a.id !== id) });
   };
 
+  const addAdvantage = () => {
+    const newAdvantage: Advantage = {
+      id: Date.now().toString(),
+      icon: 'Star',
+      title: '',
+      description: ''
+    };
+    onSave({ ...data, advantages: [...data.advantages, newAdvantage] });
+  };
+
+  const updateAdvantage = (id: string, field: keyof Advantage, value: string) => {
+    const updated = data.advantages.map(a => a.id === id ? { ...a, [field]: value } : a);
+    onSave({ ...data, advantages: updated });
+  };
+
+  const deleteAdvantage = (id: string) => {
+    onSave({ ...data, advantages: data.advantages.filter(a => a.id !== id) });
+  };
+
+  const addPartner = () => {
+    const newPartner: Partner = {
+      id: Date.now().toString(),
+      name: '',
+      logoUrl: ''
+    };
+    onSave({ ...data, partners: [...data.partners, newPartner] });
+  };
+
+  const updatePartner = (id: string, field: keyof Partner, value: string) => {
+    const updated = data.partners.map(p => p.id === id ? { ...p, [field]: value } : p);
+    onSave({ ...data, partners: updated });
+  };
+
+  const deletePartner = (id: string) => {
+    onSave({ ...data, partners: data.partners.filter(p => p.id !== id) });
+  };
+
+  const updateHero = (field: keyof HeroContent, value: string) => {
+    onSave({ ...data, hero: { ...data.hero, [field]: value } });
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-6">
+        <TabsTrigger value="home">Главная</TabsTrigger>
         <TabsTrigger value="catalog">Каталог</TabsTrigger>
         <TabsTrigger value="services">Услуги</TabsTrigger>
         <TabsTrigger value="about">О компании</TabsTrigger>
         <TabsTrigger value="articles">Статьи</TabsTrigger>
         <TabsTrigger value="data">Данные</TabsTrigger>
       </TabsList>
+
+      <TabsContent value="home" className="space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold">Главный баннер</h3>
+          <div className="space-y-3">
+            <div>
+              <Label>Заголовок</Label>
+              <Input value={data.hero.title} onChange={(e) => updateHero('title', e.target.value)} placeholder="ОТКРОЙТЕ ДЛЯ СЕБЯ" />
+            </div>
+            <div>
+              <Label>Выделенный текст (цветной)</Label>
+              <Input value={data.hero.highlightedText} onChange={(e) => updateHero('highlightedText', e.target.value)} placeholder="МИР ЧЕТКОГО ЗВУКА" />
+            </div>
+            <div>
+              <Label>Подзаголовок</Label>
+              <Input value={data.hero.subtitle} onChange={(e) => updateHero('subtitle', e.target.value)} placeholder="С НАШИМИ РЕШЕНИЯМИ!" />
+            </div>
+            <div>
+              <Label>Описание</Label>
+              <Textarea value={data.hero.description} onChange={(e) => updateHero('description', e.target.value)} placeholder="Описание услуг..." rows={3} />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">Преимущества</h3>
+            <Button onClick={addAdvantage} size="sm" className="bg-primary hover:bg-primary/90">
+              <Icon name="Plus" className="mr-2" size={16} />
+              Добавить
+            </Button>
+          </div>
+          {data.advantages.map((advantage) => (
+            <Card key={advantage.id} className="p-4">
+              <div className="space-y-3">
+                <div>
+                  <Label>Иконка (название из Lucide)</Label>
+                  <Input value={advantage.icon} onChange={(e) => updateAdvantage(advantage.id, 'icon', e.target.value)} placeholder="Star, Heart, Settings..." />
+                </div>
+                <div>
+                  <Label>Заголовок</Label>
+                  <Input value={advantage.title} onChange={(e) => updateAdvantage(advantage.id, 'title', e.target.value)} />
+                </div>
+                <div>
+                  <Label>Описание</Label>
+                  <Textarea value={advantage.description} onChange={(e) => updateAdvantage(advantage.id, 'description', e.target.value)} rows={2} />
+                </div>
+                <Button onClick={() => deleteAdvantage(advantage.id)} variant="destructive" size="sm">
+                  <Icon name="Trash2" className="mr-2" size={16} />
+                  Удалить
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">Партнёры</h3>
+            <Button onClick={addPartner} size="sm" className="bg-primary hover:bg-primary/90">
+              <Icon name="Plus" className="mr-2" size={16} />
+              Добавить
+            </Button>
+          </div>
+          {data.partners.map((partner) => (
+            <Card key={partner.id} className="p-4">
+              <div className="space-y-3">
+                <div>
+                  <Label>Название</Label>
+                  <Input value={partner.name} onChange={(e) => updatePartner(partner.id, 'name', e.target.value)} />
+                </div>
+                <div>
+                  <Label>URL логотипа</Label>
+                  <Input value={partner.logoUrl} onChange={(e) => updatePartner(partner.id, 'logoUrl', e.target.value)} placeholder="https://..." />
+                </div>
+                <Button onClick={() => deletePartner(partner.id)} variant="destructive" size="sm">
+                  <Icon name="Trash2" className="mr-2" size={16} />
+                  Удалить
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
 
       <TabsContent value="catalog" className="space-y-4">
         <Button onClick={addProduct} className="bg-primary hover:bg-primary/90 text-white font-bold">
