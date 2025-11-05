@@ -380,15 +380,16 @@ const Index = () => {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/10 flex items-center justify-center z-50">
         <div className="text-center space-y-6">
-          <div className="relative w-32 h-32 mx-auto">
-            <div className="absolute inset-0 rounded-full border-8 border-primary/20"></div>
-            <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-primary animate-spin"></div>
+          <div className="relative w-64 h-32 mx-auto">
             <div className="absolute inset-0 flex items-center justify-center">
-              <Icon name="Ear" className="text-primary animate-pulse" size={48} />
+              <img 
+                src="https://cdn.poehali.dev/files/8c127edc-be78-4a58-bceb-e0d804eb36c2.png" 
+                alt="Ясный звук - слуховые аппараты" 
+                className="w-full h-full object-contain animate-pulse"
+              />
             </div>
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-black text-primary animate-pulse">ЯСНЫЙ СЛУХ</h2>
             <p className="text-sm text-muted-foreground">Загрузка...</p>
           </div>
         </div>
