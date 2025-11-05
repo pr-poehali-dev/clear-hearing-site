@@ -157,6 +157,24 @@ const Index = () => {
       } catch (e) {
         console.error('Failed to parse data', e);
       }
+    } else {
+      const initialData = {
+        categories: defaultCategories,
+        products: [],
+        services: [],
+        about: [],
+        articles: [],
+        advantages: defaultAdvantages,
+        partners: defaultPartners,
+        hero: {
+          title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+          highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+          subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+          description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+        }
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
+      setData(initialData);
     }
   };
 
