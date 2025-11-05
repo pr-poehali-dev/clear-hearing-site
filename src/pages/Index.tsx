@@ -356,7 +356,7 @@ const Index = () => {
                   <p className="text-center text-muted-foreground mb-16">Преимущества отсутствуют. Добавьте их через админ-панель.</p>
                 )}
 
-                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20">
+                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20 mb-12">
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-center mb-4 title-transition">
                     РАБОТАЕМ С <span className="text-primary">ВЕДУЩИМИ ПРОИЗВОДИТЕЛЯМИ</span>
                   </h3>
@@ -375,6 +375,36 @@ const Index = () => {
                   ) : (
                     <p className="text-center text-muted-foreground">Партнёры отсутствуют. Добавьте их через админ-панель.</p>
                   )}
+                </div>
+
+                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-center mb-4 title-transition">
+                    ЧТО ГОВОРЯТ <span className="text-primary">НАШИ КЛИЕНТЫ</span>
+                  </h3>
+                  <p className="text-center text-base md:text-lg text-muted-foreground mb-8">
+                    Реальные отзывы клиентов на Яндекс.Картах
+                  </p>
+                  
+                  <div className="w-full rounded-xl overflow-hidden border-2 border-primary/20">
+                    <iframe
+                      src="https://yandex.ru/maps-reviews-widget/157540054545?comments"
+                      className="w-full h-[400px] md:h-[500px]"
+                      frameBorder="0"
+                      title="Отзывы на Яндекс.Картах"
+                    />
+                  </div>
+                  
+                  <div className="text-center mt-6">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold"
+                      onClick={() => window.open('https://yandex.ru/maps/org/yasny_zvuk/157540054545/?ll=37.739680%2C55.654808&z=16', '_blank')}
+                    >
+                      <Icon name="ExternalLink" className="mr-2" size={20} />
+                      ПОСМОТРЕТЬ ВСЕ ОТЗЫВЫ
+                    </Button>
+                  </div>
                 </div>
               </div>
             </section>
