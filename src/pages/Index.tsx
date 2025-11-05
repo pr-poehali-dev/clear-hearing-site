@@ -167,8 +167,6 @@ const Index = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 2000);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -207,7 +205,12 @@ const Index = () => {
         setShowAdminDialog(true);
       }, 3000);
     } else {
-      toast({ title: 'Ошибка', description: 'Неверный пароль', variant: 'destructive' });
+      toast({ 
+        title: 'Отклонено в доступе', 
+        description: 'Пароль введён неверно', 
+        variant: 'destructive' 
+      });
+      setAdminPassword('');
     }
   };
 
