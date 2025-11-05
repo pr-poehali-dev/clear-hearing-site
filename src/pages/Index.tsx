@@ -167,8 +167,6 @@ const Index = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 2000);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
