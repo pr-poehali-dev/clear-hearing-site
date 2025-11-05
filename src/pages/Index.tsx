@@ -389,7 +389,8 @@ const Index = () => {
               />
             </div>
           </div>
-          <p className="text-xl font-semibold text-muted-foreground">Загрузка...</p>
+          <p className="text-xl text-muted-foreground py-0 mx-[57px] my-[46px] font-bold">Загрузка сайта, ожидайте!
+Добро пожаловать, рады вас видеть ❤</p>
         </div>
       </div>
     );
@@ -469,7 +470,8 @@ const Index = () => {
           <div className="space-y-8 md:space-y-12 section-transition">
             <section className="text-center py-10 md:py-20">
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground px-2">{data.hero.title} <span className="text-primary">{data.hero.highlightedText}</span> {data.hero.subtitle}</h2>
-              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">{data.hero.description}</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">Загрузка сайт, ожидайте!
+Добро пожаловать, рады вас приветствовать!</p>
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('catalog')}>
                   <Icon name="Package" className="mr-2" size={20} />
