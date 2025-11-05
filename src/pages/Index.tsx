@@ -495,8 +495,7 @@ const Index = () => {
                 </div>
               )}
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground px-2 animate-in fade-in slide-in-from-bottom duration-500">{data.hero.title} <span className="text-primary">{data.hero.highlightedText}</span> {data.hero.subtitle}</h2>
-              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4 animate-in fade-in slide-in-from-bottom duration-700">Загрузка сайт, ожидайте!
-Добро пожаловать, рады вас приветствовать!</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4 animate-in fade-in slide-in-from-bottom duration-700">Современные слуховые аппараты высокого качества. Индивидуальный подбор, настройка и сервисное обслуживание. Помогаем людям слышать!</p>
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4 animate-in fade-in slide-in-from-bottom duration-1000">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('catalog')}>
                   <Icon name="Package" className="mr-2" size={20} />
