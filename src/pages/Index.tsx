@@ -379,7 +379,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/10 flex items-center justify-center z-50">
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-3">
           <div className="relative w-64 h-32 mx-auto">
             <div className="absolute inset-0 flex items-center justify-center">
               <img 
@@ -389,9 +389,7 @@ const Index = () => {
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Загрузка...</p>
-          </div>
+          <p className="text-xl font-semibold text-muted-foreground">Загрузка...</p>
         </div>
       </div>
     );
