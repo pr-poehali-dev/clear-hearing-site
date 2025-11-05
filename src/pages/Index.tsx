@@ -244,10 +244,10 @@ const Index = () => {
       <header className="sticky top-0 z-50 bg-white border-b-4 border-primary shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-2 md:gap-3">
+            <button onClick={() => setActiveSection('home')} className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition">
               <img src="https://cdn.poehali.dev/files/76bd75c3-4d4d-4b91-a795-2a19bb4fd126.png" alt="Ясный слух" className="h-10 w-10 md:h-12 md:w-12" />
               <h1 className="text-xl md:text-3xl font-black text-foreground tracking-tight">ЯСНЫЙ СЛУХ</h1>
-            </div>
+            </button>
             <nav className="hidden lg:flex gap-6">
               <button onClick={() => setActiveSection('home')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'home' ? 'text-primary' : 'text-foreground'}`}>ГЛАВНАЯ</button>
               <button onClick={() => setActiveSection('catalog')} className={`text-base font-bold hover:text-primary transition ${activeSection === 'catalog' ? 'text-primary' : 'text-foreground'}`}>КАТАЛОГ</button>
