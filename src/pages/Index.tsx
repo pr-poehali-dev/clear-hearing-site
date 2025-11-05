@@ -157,24 +157,6 @@ const Index = () => {
       } catch (e) {
         console.error('Failed to parse data', e);
       }
-    } else {
-      const initialData = {
-        categories: defaultCategories,
-        products: [],
-        services: [],
-        about: [],
-        articles: [],
-        advantages: defaultAdvantages,
-        partners: defaultPartners,
-        hero: {
-          title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
-          highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
-          subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
-          description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
-        }
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-      setData(initialData);
     }
   };
 
@@ -185,6 +167,8 @@ const Index = () => {
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(loadData, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -223,12 +207,7 @@ const Index = () => {
         setShowAdminDialog(true);
       }, 3000);
     } else {
-      toast({ 
-        title: 'Отклонено в доступе', 
-        description: 'Пароль введён неверно', 
-        variant: 'destructive' 
-      });
-      setAdminPassword('');
+      toast({ title: 'Ошибка', description: 'Неверный пароль', variant: 'destructive' });
     }
   };
 
@@ -377,7 +356,7 @@ const Index = () => {
                   <p className="text-center text-muted-foreground mb-16">Преимущества отсутствуют. Добавьте их через админ-панель.</p>
                 )}
 
-                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20 mb-12">
+                <div className="bg-background rounded-2xl p-8 md:p-12 border-2 border-primary/20">
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-center mb-4 title-transition">
                     РАБОТАЕМ С <span className="text-primary">ВЕДУЩИМИ ПРОИЗВОДИТЕЛЯМИ</span>
                   </h3>
@@ -396,28 +375,6 @@ const Index = () => {
                   ) : (
                     <p className="text-center text-muted-foreground">Партнёры отсутствуют. Добавьте их через админ-панель.</p>
                   )}
-                </div>
-
-                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-8 md:p-12 border-2 border-primary/30">
-                  <div className="text-center space-y-6">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                      <Icon name="Star" className="text-primary" size={40} />
-                    </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black title-transition">
-                      ПОДЕЛИТЕСЬ СВОИМ <span className="text-primary">ОПЫТОМ</span>
-                    </h3>
-                    <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                      Ваше мнение очень важно для нас! Оставьте отзыв на Яндекс.Картах и помогите другим клиентам сделать правильный выбор
-                    </p>
-                    <Button
-                      size="lg"
-                      className="bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8"
-                      onClick={() => window.open('https://yandex.ru/maps/org/yasny_zvuk/157540054545/?ll=37.739680%2C55.654808&z=16', '_blank')}
-                    >
-                      <Icon name="MessageSquare" className="mr-2" size={22} />
-                      ОСТАВИТЬ ОТЗЫВ
-                    </Button>
-                  </div>
                 </div>
               </div>
             </section>
