@@ -284,37 +284,42 @@ const Index = () => {
       return;
     }
 
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      items: [...cart],
-      total: getTotalPrice(),
-      customer: { ...orderForm },
-      date: new Date().toLocaleString('ru-RU'),
-      status: 'new'
-    };
-    
-    const updatedData = {
-      ...data,
-      orders: [...data.orders, newOrder]
-    };
-    saveData(updatedData);
-    
-    setOrderSuccess(true);
+    setOrderProcessing(true);
     
     setTimeout(() => {
-      setOrderSuccess(false);
-      setShowCheckoutDialog(false);
-      setCart([]);
-      localStorage.removeItem(CART_STORAGE_KEY);
-      setOrderForm({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email: '',
-        address: '',
-        comment: ''
-      });
-      toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        items: [...cart],
+        total: getTotalPrice(),
+        customer: { ...orderForm },
+        date: new Date().toLocaleString('ru-RU'),
+        status: 'new'
+      };
+      
+      const updatedData = {
+        ...data,
+        orders: [...data.orders, newOrder]
+      };
+      saveData(updatedData);
+      
+      setOrderProcessing(false);
+      setOrderSuccess(true);
+      
+      setTimeout(() => {
+        setOrderSuccess(false);
+        setShowCheckoutDialog(false);
+        setCart([]);
+        localStorage.removeItem(CART_STORAGE_KEY);
+        setOrderForm({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email: '',
+          address: '',
+          comment: ''
+        });
+        toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
+      }, 3000);
     }, 3000);
   };
 
@@ -957,13 +962,31 @@ const Index = () => {
               После отправки заказа наш менеджер свяжется с вами в течение 1 часа для уточнения способа доставки и оплаты.
             </DialogDescription>
           </DialogHeader>
-          {orderSuccess ? (
-            <div className="text-center py-12 space-y-4">
-              <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <Icon name="CheckCircle" className="text-primary" size={40} />
+          {orderProcessing ? (
+            <div className="text-center py-12 space-y-6">
+              <div className="relative w-32 h-32 mx-auto">
+                <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping"></div>
+                <div className="relative w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+                  <Icon name="Clock" className="text-primary animate-bounce" size={48} />
+                </div>
               </div>
-              <h3 className="text-2xl font-black text-primary">Заказ оформлен!</h3>
-              <p className="text-muted-foreground">Скоро с вами свяжется наш менеджер</p>
+              <div className="space-y-2">
+                <p className="text-xl font-black animate-pulse">Заказ оформляется...</p>
+                <p className="text-sm text-muted-foreground">Пожалуйста, подождите</p>
+              </div>
+            </div>
+          ) : orderSuccess ? (
+            <div className="text-center py-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="relative w-32 h-32 mx-auto">
+                <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse"></div>
+                <div className="relative w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Icon name="CheckCircle" className="text-primary animate-in zoom-in duration-700" size={64} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black text-primary animate-in slide-in-from-top duration-700">Заказ оформлен!</h3>
+                <p className="text-muted-foreground animate-in fade-in duration-1000">Скоро с вами свяжется наш менеджер</p>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">
