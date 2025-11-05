@@ -85,6 +85,7 @@ interface AppData {
 }
 
 const STORAGE_KEY = 'yasny-slukh-data';
+const CART_STORAGE_KEY = 'yasny-slukh-cart';
 const ADMIN_PASSWORD = '3956Qqqq';
 
 const Index = () => {
@@ -185,7 +186,19 @@ const Index = () => {
 
   useEffect(() => {
     loadData();
+    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+    if (storedCart) {
+      try {
+        setCart(JSON.parse(storedCart));
+      } catch (e) {
+        console.error('Failed to parse cart', e);
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -262,6 +275,7 @@ const Index = () => {
         setOrderSuccess(false);
         setShowCheckoutDialog(false);
         setCart([]);
+        localStorage.removeItem(CART_STORAGE_KEY);
         setOrderForm({
           firstName: '',
           lastName: '',
