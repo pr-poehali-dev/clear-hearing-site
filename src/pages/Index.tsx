@@ -413,7 +413,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
 
-      <header className="sticky top-0 z-50 bg-white border-b-4 border-primary shadow-md">
+      <header className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <button onClick={() => setActiveSection('home')} className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition">
