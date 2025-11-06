@@ -123,6 +123,7 @@ const Index = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showCatalogDropdown, setShowCatalogDropdown] = useState(false);
   const [showArticlesDropdown, setShowArticlesDropdown] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAdminDialog, setShowAdminDialog] = useState(false);
   const [isAdminAuthed, setIsAdminAuthed] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -456,7 +457,12 @@ const Index = () => {
 
             <div className="hidden lg:flex items-center gap-4 flex-1 mx-8">
               <div className="relative flex-1 max-w-md">
-                <Input placeholder="Найдите товар или услугу" className="pl-10" />
+                <Input 
+                  placeholder="Найдите товар или услугу" 
+                  className="pl-10 rounded-full" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
                 <Icon name="Search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
             </div>
@@ -465,7 +471,7 @@ const Index = () => {
               <a href={`tel:${data.topBar.phone.replace(/\s/g, '')}`} className="text-lg font-bold hover:text-primary transition">
                 {data.topBar.phone}
               </a>
-              <Button onClick={() => setShowAppointmentDialog(true)} className="bg-primary hover:bg-primary/90 font-bold text-white text-sm h-9">
+              <Button onClick={() => setShowAppointmentDialog(true)} className="bg-primary hover:bg-primary/90 font-bold text-white text-sm h-9 rounded-full">
                 Записаться на прием
               </Button>
             </div>
@@ -485,71 +491,11 @@ const Index = () => {
             </div>
           </div>
 
-          <nav className="hidden lg:flex gap-6 pb-3 border-t pt-3 relative">
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowCatalogDropdown(true)}
-              onMouseLeave={() => setShowCatalogDropdown(false)}
-            >
-              <button 
-                onClick={() => setActiveSection('catalog')} 
-                className={`text-sm font-medium hover:text-primary transition flex items-center gap-1 ${activeSection === 'catalog' ? 'text-primary' : 'text-foreground'}`}
-              >
-                Каталог
-                <Icon name="ChevronDown" size={16} />
-              </button>
-              {showCatalogDropdown && (
-                <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg py-2 min-w-[200px] z-50 border">
-                  {data.categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => {
-                        setSelectedCategoryId(category.id);
-                        setActiveSection('catalog');
-                        setShowCatalogDropdown(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
-                    >
-                      {category.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
+          <nav className="hidden lg:flex gap-6 pb-3 border-t pt-3 relative justify-center">
+            <button onClick={() => setActiveSection('catalog')} className={`text-sm font-medium hover:text-primary transition ${activeSection === 'catalog' ? 'text-primary' : 'text-foreground'}`}>Каталог</button>
             <button onClick={() => setActiveSection('services')} className={`text-sm font-medium hover:text-primary transition ${activeSection === 'services' ? 'text-primary' : 'text-foreground'}`}>Услуги</button>
             <button onClick={() => setActiveSection('about')} className={`text-sm font-medium hover:text-primary transition ${activeSection === 'about' ? 'text-primary' : 'text-foreground'}`}>О компании</button>
-            
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowArticlesDropdown(true)}
-              onMouseLeave={() => setShowArticlesDropdown(false)}
-            >
-              <button 
-                onClick={() => setActiveSection('articles')} 
-                className={`text-sm font-medium hover:text-primary transition flex items-center gap-1 ${activeSection === 'articles' ? 'text-primary' : 'text-foreground'}`}
-              >
-                Статьи
-                <Icon name="ChevronDown" size={16} />
-              </button>
-              {showArticlesDropdown && data.articles.length > 0 && (
-                <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg py-2 min-w-[250px] z-50 border max-h-[400px] overflow-y-auto">
-                  {data.articles.map((article) => (
-                    <button
-                      key={article.id}
-                      onClick={() => {
-                        setSelectedArticle(article);
-                        setShowArticlesDropdown(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
-                    >
-                      {article.title}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
+            <button onClick={() => setActiveSection('articles')} className={`text-sm font-medium hover:text-primary transition ${activeSection === 'articles' ? 'text-primary' : 'text-foreground'}`}>Статьи</button>
             <button onClick={() => setActiveSection('reviews')} className={`text-sm font-medium hover:text-primary transition ${activeSection === 'reviews' ? 'text-primary' : 'text-foreground'}`}>Отзывы</button>
 
             <Button onClick={() => setShowCartDialog(true)} variant="outline" size="icon" className="border-2 relative ml-auto">
@@ -567,7 +513,12 @@ const Index = () => {
 
           <div className="lg:hidden pb-3 border-t pt-3">
             <div className="relative mb-3">
-              <Input placeholder="Найдите товар или услугу" className="pl-10" />
+              <Input 
+                placeholder="Найдите товар или услугу" 
+                className="pl-10 rounded-full" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <Icon name="Search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
             <div className="text-center">
@@ -619,26 +570,55 @@ const Index = () => {
               )}
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground px-2 animate-in fade-in slide-in-from-bottom duration-500">{data.hero.title} <span className="text-primary">{data.hero.highlightedText}</span> {data.hero.subtitle}</h2>
               <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4 animate-in fade-in slide-in-from-bottom duration-700">Современные слуховые аппараты высокого качества. Индивидуальный подбор, настройка и сервисное обслуживание. Помогаем людям слышать!</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
+                <button
+                  onClick={() => {
+                    setActiveSection('catalog');
+                    setSelectedCategoryId(data.categories.find(c => c.name.includes('Заушные'))?.id || null);
+                  }}
+                  className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/90 to-primary h-64 hover:scale-105 transition-transform duration-300 shadow-xl"
+                >
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white">
+                    <Icon name="Ear" size={48} className="mb-4" />
+                    <h3 className="text-2xl font-black mb-2">СЛУХОВЫЕ АППАРАТЫ</h3>
+                    <p className="text-sm opacity-90">Современные решения для вашего слуха</p>
+                  </div>
+                  <div className="absolute bottom-0 right-0 opacity-10">
+                    <Icon name="Ear" size={180} />
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setActiveSection('catalog');
+                    setSelectedCategoryId(data.categories.find(c => c.name.includes('Аксессуары'))?.id || null);
+                  }}
+                  className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500/90 to-blue-600 h-64 hover:scale-105 transition-transform duration-300 shadow-xl"
+                >
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white">
+                    <Icon name="Cable" size={48} className="mb-4" />
+                    <h3 className="text-2xl font-black mb-2">АКСЕССУАРЫ</h3>
+                    <p className="text-sm opacity-90">Всё необходимое для вашего комфорта</p>
+                  </div>
+                  <div className="absolute bottom-0 right-0 opacity-10">
+                    <Icon name="Cable" size={180} />
+                  </div>
+                </button>
+              </div>
+
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4 animate-in fade-in slide-in-from-bottom duration-1000">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('catalog')}>
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto rounded-full" onClick={() => setActiveSection('catalog')}>
                   <Icon name="Package" className="mr-2" size={20} />
                   ПОСМОТРЕТЬ КАТАЛОГ
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('services')}>
+                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto rounded-full" onClick={() => setActiveSection('services')}>
                   <Icon name="Briefcase" className="mr-2" size={20} />
                   НАШИ УСЛУГИ
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('about')}>
+                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto rounded-full" onClick={() => setActiveSection('about')}>
                   <Icon name="Info" className="mr-2" size={20} />
                   О КОМПАНИИ
-                </Button>
-                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('articles')}>
-                  <Icon name="BookOpen" className="mr-2" size={20} />
-                  СТАТЬИ
-                </Button>
-                <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-base md:text-lg font-bold px-6 md:px-8 w-full sm:w-auto" onClick={() => setActiveSection('reviews')}>
-                  <Icon name="Star" className="mr-2" size={20} />
-                  ОТЗЫВЫ
                 </Button>
               </div>
             </section>
@@ -706,7 +686,7 @@ const Index = () => {
                 <Button
                   onClick={() => setSelectedCategoryId(null)}
                   variant={selectedCategoryId === null ? "default" : "outline"}
-                  className={`font-bold ${selectedCategoryId === null ? 'bg-primary hover:bg-primary/90 text-white' : 'border-2 border-primary text-primary hover:bg-primary hover:text-white'}`}
+                  className={`font-bold rounded-full ${selectedCategoryId === null ? 'bg-primary hover:bg-primary/90 text-white' : 'border-2 border-primary text-primary hover:bg-primary hover:text-white'}`}
                 >
                   <Icon name="Grid" className="mr-2" size={18} />
                   Все категории
@@ -716,7 +696,7 @@ const Index = () => {
                     key={category.id}
                     onClick={() => setSelectedCategoryId(category.id)}
                     variant={selectedCategoryId === category.id ? "default" : "outline"}
-                    className={`font-bold ${selectedCategoryId === category.id ? 'bg-primary hover:bg-primary/90 text-white' : 'border-2 border-primary text-primary hover:bg-primary hover:text-white'}`}
+                    className={`font-bold rounded-full ${selectedCategoryId === category.id ? 'bg-primary hover:bg-primary/90 text-white' : 'border-2 border-primary text-primary hover:bg-primary hover:text-white'}`}
                   >
                     <Icon name={category.icon as any} className="mr-2" size={18} fallback="Package" />
                     {category.name}
@@ -728,11 +708,25 @@ const Index = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {data.products.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Товары отсутствуют. Добавьте их через админ-панель.</p>
-              ) : data.products.filter(product => selectedCategoryId === null || product.categoryId === selectedCategoryId).length === 0 ? (
-                <p className="col-span-full text-center text-muted-foreground py-12">В этой категории пока нет товаров.</p>
+              ) : data.products.filter(product => {
+                const matchesCategory = selectedCategoryId === null || product.categoryId === selectedCategoryId;
+                const matchesSearch = searchQuery === '' || 
+                  product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  product.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+              }).length === 0 ? (
+                <p className="col-span-full text-center text-muted-foreground py-12">
+                  {searchQuery ? 'По вашему запросу ничего не найдено.' : 'В этой категории пока нет товаров.'}
+                </p>
               ) : (
                 data.products
-                  .filter(product => selectedCategoryId === null || product.categoryId === selectedCategoryId)
+                  .filter(product => {
+                    const matchesCategory = selectedCategoryId === null || product.categoryId === selectedCategoryId;
+                    const matchesSearch = searchQuery === '' || 
+                      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                  })
                   .map((product) => {
                     const category = data.categories.find(c => c.id === product.categoryId);
                     return (
@@ -757,7 +751,7 @@ const Index = () => {
                           <p className="text-xs text-muted-foreground">{product.specs}</p>
                         </CardContent>
                         <CardFooter>
-                          <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold" onClick={() => addToCart(product)}>
+                          <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-full" onClick={() => addToCart(product)}>
                             <Icon name="ShoppingCart" className="mr-2" size={18} />
                             В КОРЗИНУ
                           </Button>
@@ -777,7 +771,18 @@ const Index = () => {
               {data.services.length === 0 ? (
                 <p className="col-span-full text-center text-muted-foreground py-12">Услуги отсутствуют. Добавьте их через админ-панель.</p>
               ) : (
-                data.services.map((service) => (
+                data.services.filter(service => 
+                  searchQuery === '' || 
+                  service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (service.description && service.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).length === 0 ? (
+                  <p className="col-span-full text-center text-muted-foreground py-12">По вашему запросу ничего не найдено.</p>
+                ) : (
+                  data.services.filter(service => 
+                    searchQuery === '' || 
+                    service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (service.description && service.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                  ).map((service) => (
                   <Card key={service.id} className="hover:border-primary transition border-2 card-transition">
                     <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
                     <CardHeader>
@@ -791,7 +796,7 @@ const Index = () => {
                     )}
                     <CardFooter>
                       <Button 
-                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold" 
+                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-full" 
                         onClick={() => setShowAppointmentDialog(true)}
                       >
                         ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ
@@ -890,7 +895,7 @@ const Index = () => {
                   </div>
                   <Button 
                     size="lg"
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg h-16"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg h-16 rounded-full"
                     onClick={() => window.open('https://yandex.ru/maps/org/yasny_zvuk/157540054545/reviews', '_blank')}
                   >
                     <Icon name="ExternalLink" className="mr-3" size={24} />
