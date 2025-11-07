@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Get all services",
+      "method": "GET",
+      "path": "/?type=services",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get all data",
+      "method": "GET",
+      "path": "/?type=all",
+      "expectedStatus": 200
+    }
+  ]
+}

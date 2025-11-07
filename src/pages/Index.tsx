@@ -360,41 +360,52 @@ const Index = () => {
 
     setOrderProcessing(true);
     
-    setTimeout(() => {
-      const newOrder: Order = {
-        id: Date.now().toString(),
-        items: [...cart],
-        total: getTotalPrice(),
-        customer: { ...orderForm },
-        date: new Date().toLocaleString('ru-RU'),
-        status: 'new'
-      };
-      
-      const updatedData = {
-        ...data,
-        orders: [...data.orders, newOrder]
-      };
-      saveData(updatedData);
-      
+    try {
+      const orderItems = cart.map(item => ({
+        name: item.product.name,
+        price: `${item.product.price} ₽`,
+        quantity: item.quantity
+      }));
+
+      const response = await fetch('https://functions.poehali.dev/8181fa7b-ed7e-4e77-acb1-1f69039b9fd9?type=orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: `${orderForm.firstName} ${orderForm.lastName}`,
+          customerPhone: orderForm.phone,
+          customerEmail: orderForm.email || null,
+          items: orderItems,
+          totalAmount: `${getTotalPrice().toLocaleString()} ₽`,
+          status: 'new'
+        })
+      });
+
+      if (response.ok) {
+        setOrderProcessing(false);
+        setOrderSuccess(true);
+        
+        setTimeout(() => {
+          setOrderSuccess(false);
+          setShowCheckoutDialog(false);
+          setCart([]);
+          localStorage.removeItem(CART_STORAGE_KEY);
+          setOrderForm({
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: '',
+            address: '',
+            comment: ''
+          });
+          toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
+        }, 3000);
+      } else {
+        throw new Error('Ошибка сохранения заказа');
+      }
+    } catch (error) {
       setOrderProcessing(false);
-      setOrderSuccess(true);
-      
-      setTimeout(() => {
-        setOrderSuccess(false);
-        setShowCheckoutDialog(false);
-        setCart([]);
-        localStorage.removeItem(CART_STORAGE_KEY);
-        setOrderForm({
-          firstName: '',
-          lastName: '',
-          phone: '',
-          email: '',
-          address: '',
-          comment: ''
-        });
-        toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
-      }, 3000);
-    }, 3000);
+      toast({ title: 'Ошибка', description: 'Не удалось оформить заказ. Попробуйте позже.', variant: 'destructive' });
+    }
   };
 
   const handleAdminLogin = () => {
