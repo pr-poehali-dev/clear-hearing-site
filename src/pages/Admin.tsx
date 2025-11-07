@@ -995,11 +995,14 @@ const Admin = () => {
                           
                           <div className="border-t pt-3">
                             <Label className="text-xs">Товары:</Label>
-                            {JSON.parse(order.items as any).map((item: any, idx: number) => (
-                              <div key={idx} className="text-sm mt-1">
-                                • {item.name} x{item.quantity} - {item.price}
-                              </div>
-                            ))}
+                            {(() => {
+                              const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                              return items.map((item: any, idx: number) => (
+                                <div key={idx} className="text-sm mt-1">
+                                  • {item.name} x{item.quantity} - {item.price}
+                                </div>
+                              ));
+                            })()}
                           </div>
 
                           <div className="flex gap-2 pt-2">

@@ -181,6 +181,21 @@ const Index = () => {
         fetch('https://functions.poehali.dev/8181fa7b-ed7e-4e77-acb1-1f69039b9fd9?type=all')
       ]);
       
+      if (!categoriesRes.ok) {
+        console.error('Categories API error:', categoriesRes.status, await categoriesRes.text());
+        throw new Error('Categories API request failed');
+      }
+      
+      if (!productsRes.ok) {
+        console.error('Products API error:', productsRes.status, await productsRes.text());
+        throw new Error('Products API request failed');
+      }
+      
+      if (!allDataRes.ok) {
+        console.error('AllData API error:', allDataRes.status, await allDataRes.text());
+        throw new Error('AllData API request failed');
+      }
+      
       const categoriesData = await categoriesRes.json();
       const productsData = await productsRes.json();
       const dbData = await allDataRes.json();
@@ -231,21 +246,31 @@ const Index = () => {
         logoUrl: item.logo
       }));
       
-      const mappedOrders = (dbData.orders || []).map((o: any) => ({
-        id: String(o.id),
-        items: JSON.parse(o.items || '[]'),
-        total: 0,
-        customer: {
-          firstName: o.customer_name?.split(' ')[0] || '',
-          lastName: o.customer_name?.split(' ')[1] || '',
-          phone: o.customer_phone || '',
-          email: o.customer_email || '',
-          address: '',
-          comment: ''
-        },
-        date: new Date(o.created_at).toLocaleDateString('ru-RU'),
-        status: o.status as 'new' | 'processing' | 'completed'
-      }));
+      const mappedOrders = (dbData.orders || []).map((o: any) => {
+        let items = [];
+        try {
+          items = typeof o.items === 'string' ? JSON.parse(o.items) : (o.items || []);
+        } catch (e) {
+          console.error('Failed to parse order items', e);
+          items = [];
+        }
+        
+        return {
+          id: String(o.id),
+          items: items,
+          total: 0,
+          customer: {
+            firstName: o.customer_name?.split(' ')[0] || '',
+            lastName: o.customer_name?.split(' ')[1] || '',
+            phone: o.customer_phone || '',
+            email: o.customer_email || '',
+            address: '',
+            comment: ''
+          },
+          date: new Date(o.created_at).toLocaleDateString('ru-RU'),
+          status: o.status as 'new' | 'processing' | 'completed'
+        };
+      });
       
       let heroData: HeroContent = {
         title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
@@ -289,6 +314,12 @@ const Index = () => {
       
     } catch (error) {
       console.error('Failed to load data from backend', error);
+      toast({ 
+        title: 'Ошибка загрузки', 
+        description: 'Не удалось загрузить данные с сервера. Используются локальные данные.', 
+        variant: 'destructive' 
+      });
+      
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
@@ -310,8 +341,41 @@ const Index = () => {
             orders: parsed.orders || []
           });
         } catch (e) {
-          console.error('Failed to parse data', e);
+          console.error('Failed to parse stored data', e);
+          setData({
+            categories: defaultCategories,
+            products: [],
+            services: [],
+            about: [],
+            articles: [],
+            advantages: defaultAdvantages,
+            partners: defaultPartners,
+            hero: {
+              title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+              highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+              subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+              description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+            },
+            orders: []
+          });
         }
+      } else {
+        setData({
+          categories: defaultCategories,
+          products: [],
+          services: [],
+          about: [],
+          articles: [],
+          advantages: defaultAdvantages,
+          partners: defaultPartners,
+          hero: {
+            title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+            highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+            subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+            description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+          },
+          orders: []
+        });
       }
     }
   };
