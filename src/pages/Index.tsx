@@ -173,29 +173,124 @@ const Index = () => {
     orders: []
   });
 
-  const loadData = () => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setData({
-          categories: parsed.categories || defaultCategories,
-          products: parsed.products || [],
-          services: parsed.services || [],
-          about: parsed.about || [],
-          articles: parsed.articles || [],
-          advantages: parsed.advantages || defaultAdvantages,
-          partners: parsed.partners || defaultPartners,
-          hero: parsed.hero || {
-            title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
-            highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
-            subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
-            description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+  const loadData = async () => {
+    try {
+      const [categoriesRes, productsRes, allDataRes] = await Promise.all([
+        fetch('https://functions.poehali.dev/7dcdd31e-3afc-4dd1-8b1e-3ddb3a43c1e2'),
+        fetch('https://functions.poehali.dev/e7fdbb37-3c51-41af-84f1-84aa0402a944'),
+        fetch('https://functions.poehali.dev/53f4f863-66fb-4201-bc3a-49119b5b8e92?type=all')
+      ]);
+
+      if (!categoriesRes.ok || !productsRes.ok || !allDataRes.ok) {
+        throw new Error('Failed to load data from API');
+      }
+
+      const categoriesData = await categoriesRes.json();
+      const productsData = await productsRes.json();
+      const dbData = await allDataRes.json();
+
+      const newData = {
+        categories: categoriesData.length > 0 ? categoriesData.map((c: any) => ({
+          id: c.id.toString(),
+          name: c.name,
+          icon: c.icon
+        })) : defaultCategories,
+        products: productsData.map((p: any) => ({
+          id: p.id.toString(),
+          name: p.name,
+          imageUrl: p.image_url || '',
+          price: parseFloat(p.price),
+          description: p.description || '',
+          specs: p.specs || '',
+          categoryId: p.category_id?.toString() || ''
+        })),
+        services: dbData.services.map((s: any) => ({
+          id: s.id.toString(),
+          name: s.name,
+          imageUrl: s.image_url || '',
+          contact: s.contact || '',
+          link: s.link || '',
+          description: s.description || ''
+        })),
+        about: dbData.about.map((a: any) => ({
+          id: a.id.toString(),
+          title: a.title,
+          description: a.description
+        })),
+        articles: dbData.articles.map((ar: any) => ({
+          id: ar.id.toString(),
+          title: ar.title,
+          content: ar.content,
+          imageUrl: ar.image_url || '',
+          date: ar.date
+        })),
+        advantages: dbData.advantages.length > 0 ? dbData.advantages.map((ad: any) => ({
+          id: ad.id.toString(),
+          icon: ad.icon,
+          title: ad.title,
+          description: ad.description
+        })) : defaultAdvantages,
+        partners: dbData.partners.length > 0 ? dbData.partners.map((p: any) => ({
+          id: p.id.toString(),
+          name: p.name,
+          logoUrl: p.logo_url
+        })) : defaultPartners,
+        hero: dbData.hero.title ? {
+          title: dbData.hero.title,
+          highlightedText: dbData.hero.highlighted_text,
+          subtitle: dbData.hero.subtitle,
+          description: dbData.hero.description
+        } : {
+          title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+          highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+          subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+          description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+        },
+        orders: dbData.orders.map((o: any) => ({
+          id: o.id.toString(),
+          items: typeof o.items === 'string' ? JSON.parse(o.items) : o.items,
+          total: parseFloat(o.total),
+          customer: {
+            firstName: o.customer_first_name,
+            lastName: o.customer_last_name,
+            phone: o.customer_phone,
+            email: o.customer_email || '',
+            address: o.customer_address,
+            comment: o.customer_comment || ''
           },
-          orders: parsed.orders || []
-        });
-      } catch (e) {
-        console.error('Failed to parse data', e);
+          date: o.created_at,
+          status: o.status
+        }))
+      };
+
+      setData(newData);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+      
+    } catch (error) {
+      console.error('Failed to load data from API, using localStorage', error);
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setData({
+            categories: parsed.categories || defaultCategories,
+            products: parsed.products || [],
+            services: parsed.services || [],
+            about: parsed.about || [],
+            articles: parsed.articles || [],
+            advantages: parsed.advantages || defaultAdvantages,
+            partners: parsed.partners || defaultPartners,
+            hero: parsed.hero || {
+              title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
+              highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
+              subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
+              description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
+            },
+            orders: parsed.orders || []
+          });
+        } catch (e) {
+          console.error('Failed to parse stored data', e);
+        }
       }
     }
   };
@@ -588,7 +683,7 @@ const Index = () => {
                   <Icon name="Grid" className="mr-2" size={18} />
                   Все категории
                 </Button>
-                {data.categories.map((category) => (
+                {data.categories?.filter(cat => cat).map((category) => (
                   <Button
                     key={category.id}
                     onClick={() => setSelectedCategoryId(category.id)}
@@ -1222,7 +1317,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
   };
 
   const updateCategory = (id: string, field: keyof Category, value: string) => {
-    const updated = data.categories.map(c => c.id === id ? { ...c, [field]: value } : c);
+    const updated = data.categories?.filter(cat => cat).map(c => c.id === id ? { ...c, [field]: value } : c);
     onSave({ ...data, categories: updated });
   };
 
@@ -1475,7 +1570,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
             Добавить категорию
           </Button>
         </div>
-        {data.categories.map((category) => (
+        {data.categories?.filter(cat => cat).map((category) => (
           <Card key={category.id} className="border-2">
             <CardContent className="pt-6 space-y-3">
               <div>
@@ -1516,7 +1611,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
                   className="w-full h-10 px-3 rounded-md border border-input bg-background"
                 >
                   <option value="">Без категории</option>
-                  {data.categories.map((cat) => (
+                  {data.categories?.filter(cat => cat).map((cat) => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
