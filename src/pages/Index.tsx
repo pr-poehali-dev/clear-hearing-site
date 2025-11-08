@@ -173,209 +173,29 @@ const Index = () => {
     orders: []
   });
 
-  const loadData = async () => {
-    try {
-      const [categoriesRes, productsRes, allDataRes] = await Promise.all([
-        fetch('https://functions.poehali.dev/18f56703-a9d5-4d5d-ac38-86c6f3079366'),
-        fetch('https://functions.poehali.dev/d21add4f-1d9e-4a84-92ca-f909205b9b38'),
-        fetch('https://functions.poehali.dev/8181fa7b-ed7e-4e77-acb1-1f69039b9fd9?type=all')
-      ]);
-      
-      if (!categoriesRes.ok) {
-        console.error('Categories API error:', categoriesRes.status, await categoriesRes.text());
-        throw new Error('Categories API request failed');
-      }
-      
-      if (!productsRes.ok) {
-        console.error('Products API error:', productsRes.status, await productsRes.text());
-        throw new Error('Products API request failed');
-      }
-      
-      if (!allDataRes.ok) {
-        console.error('AllData API error:', allDataRes.status, await allDataRes.text());
-        throw new Error('AllData API request failed');
-      }
-      
-      const categoriesData = await categoriesRes.json();
-      const productsData = await productsRes.json();
-      const dbData = await allDataRes.json();
-      
-      const mappedProducts = productsData.map((p: any) => ({
-        id: String(p.id),
-        name: p.name,
-        imageUrl: p.image_url || '',
-        price: parseFloat(p.price),
-        description: p.description || '',
-        specs: '',
-        categoryId: p.category_id ? String(p.category_id) : '1'
-      }));
-      
-      const mappedServices = (dbData.services || []).map((s: any) => ({
-        id: String(s.id),
-        name: s.title,
-        imageUrl: '',
-        contact: '',
-        link: '',
-        description: s.description
-      }));
-      
-      const mappedArticles = (dbData.articles || []).map((a: any) => ({
-        id: String(a.id),
-        title: a.title,
-        content: a.content,
-        imageUrl: a.image || '',
-        date: a.date
-      }));
-      
-      const mappedAbout = (dbData.about || []).map((item: any) => ({
-        id: String(item.id),
-        title: item.title,
-        description: item.description
-      }));
-      
-      const mappedAdvantages = (dbData.advantages || []).map((item: any) => ({
-        id: String(item.id),
-        icon: item.icon,
-        title: item.title,
-        description: item.description
-      }));
-      
-      const mappedPartners = (dbData.partners || []).map((item: any) => ({
-        id: String(item.id),
-        name: item.name,
-        logoUrl: item.logo
-      }));
-      
-      const mappedOrders = (dbData.orders || []).map((o: any) => {
-        let items = [];
-        try {
-          items = typeof o.items === 'string' ? JSON.parse(o.items) : (o.items || []);
-        } catch (e) {
-          console.error('Failed to parse order items', e);
-          items = [];
-        }
-        
-        return {
-          id: String(o.id),
-          items: items,
-          total: 0,
-          customer: {
-            firstName: o.customer_name?.split(' ')[0] || '',
-            lastName: o.customer_name?.split(' ')[1] || '',
-            phone: o.customer_phone || '',
-            email: o.customer_email || '',
-            address: '',
-            comment: ''
-          },
-          date: new Date(o.created_at).toLocaleDateString('ru-RU'),
-          status: o.status as 'new' | 'processing' | 'completed'
-        };
-      });
-      
-      let heroData: HeroContent = {
-        title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
-        highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
-        subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
-        description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
-      };
-      
-      if (dbData.hero && dbData.hero.title) {
-        heroData = {
-          title: dbData.hero.title || heroData.title,
-          highlightedText: dbData.hero.highlighted_text || heroData.highlightedText,
-          subtitle: dbData.hero.subtitle || heroData.subtitle,
-          description: dbData.hero.description || heroData.description,
-          imageUrl: dbData.hero.image_url || undefined
-        };
-      }
-      
-      setData({
-        categories: defaultCategories,
-        products: mappedProducts,
-        services: mappedServices.length > 0 ? mappedServices : [],
-        about: mappedAbout.length > 0 ? mappedAbout : [],
-        articles: mappedArticles.length > 0 ? mappedArticles : [],
-        advantages: mappedAdvantages.length > 0 ? mappedAdvantages : defaultAdvantages,
-        partners: mappedPartners.length > 0 ? mappedPartners : defaultPartners,
-        hero: heroData,
-        orders: mappedOrders
-      });
-      
-      const dataToStore = {
-        services: mappedServices,
-        about: mappedAbout,
-        articles: mappedArticles,
-        orders: mappedOrders,
-        advantages: mappedAdvantages.length > 0 ? mappedAdvantages : defaultAdvantages,
-        partners: mappedPartners.length > 0 ? mappedPartners : defaultPartners,
-        hero: heroData
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
-      
-    } catch (error) {
-      console.error('Failed to load data from backend', error);
-      toast({ 
-        title: 'Ошибка загрузки', 
-        description: 'Не удалось загрузить данные с сервера. Используются локальные данные.', 
-        variant: 'destructive' 
-      });
-      
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setData({
-            categories: parsed.categories || defaultCategories,
-            products: parsed.products || [],
-            services: parsed.services || [],
-            about: parsed.about || [],
-            articles: parsed.articles || [],
-            advantages: parsed.advantages || defaultAdvantages,
-            partners: parsed.partners || defaultPartners,
-            hero: parsed.hero || {
-              title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
-              highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
-              subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
-              description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
-            },
-            orders: parsed.orders || []
-          });
-        } catch (e) {
-          console.error('Failed to parse stored data', e);
-          setData({
-            categories: defaultCategories,
-            products: [],
-            services: [],
-            about: [],
-            articles: [],
-            advantages: defaultAdvantages,
-            partners: defaultPartners,
-            hero: {
-              title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
-              highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
-              subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
-              description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
-            },
-            orders: []
-          });
-        }
-      } else {
+  const loadData = () => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
         setData({
-          categories: defaultCategories,
-          products: [],
-          services: [],
-          about: [],
-          articles: [],
-          advantages: defaultAdvantages,
-          partners: defaultPartners,
-          hero: {
+          categories: parsed.categories || defaultCategories,
+          products: parsed.products || [],
+          services: parsed.services || [],
+          about: parsed.about || [],
+          articles: parsed.articles || [],
+          advantages: parsed.advantages || defaultAdvantages,
+          partners: parsed.partners || defaultPartners,
+          hero: parsed.hero || {
             title: 'ОТКРОЙТЕ ДЛЯ СЕБЯ',
             highlightedText: 'МИР ЧЕТКОГО ЗВУКА',
             subtitle: 'С НАШИМИ РЕШЕНИЯМИ!',
             description: 'Инновационные слуховые технологии от мировых лидеров с персональной настройкой и пожизненной поддержкой'
           },
-          orders: []
+          orders: parsed.orders || []
         });
+      } catch (e) {
+        console.error('Failed to parse data', e);
       }
     }
   };
@@ -486,52 +306,41 @@ const Index = () => {
 
     setOrderProcessing(true);
     
-    try {
-      const orderItems = cart.map(item => ({
-        name: item.product.name,
-        price: `${item.product.price} ₽`,
-        quantity: item.quantity
-      }));
-
-      const response = await fetch('https://functions.poehali.dev/8181fa7b-ed7e-4e77-acb1-1f69039b9fd9?type=orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName: `${orderForm.firstName} ${orderForm.lastName}`,
-          customerPhone: orderForm.phone,
-          customerEmail: orderForm.email || null,
-          items: orderItems,
-          totalAmount: `${getTotalPrice().toLocaleString()} ₽`,
-          status: 'new'
-        })
-      });
-
-      if (response.ok) {
-        setOrderProcessing(false);
-        setOrderSuccess(true);
-        
-        setTimeout(() => {
-          setOrderSuccess(false);
-          setShowCheckoutDialog(false);
-          setCart([]);
-          localStorage.removeItem(CART_STORAGE_KEY);
-          setOrderForm({
-            firstName: '',
-            lastName: '',
-            phone: '',
-            email: '',
-            address: '',
-            comment: ''
-          });
-          toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
-        }, 3000);
-      } else {
-        throw new Error('Ошибка сохранения заказа');
-      }
-    } catch (error) {
+    setTimeout(() => {
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        items: [...cart],
+        total: getTotalPrice(),
+        customer: { ...orderForm },
+        date: new Date().toLocaleString('ru-RU'),
+        status: 'new'
+      };
+      
+      const updatedData = {
+        ...data,
+        orders: [...data.orders, newOrder]
+      };
+      saveData(updatedData);
+      
       setOrderProcessing(false);
-      toast({ title: 'Ошибка', description: 'Не удалось оформить заказ. Попробуйте позже.', variant: 'destructive' });
-    }
+      setOrderSuccess(true);
+      
+      setTimeout(() => {
+        setOrderSuccess(false);
+        setShowCheckoutDialog(false);
+        setCart([]);
+        localStorage.removeItem(CART_STORAGE_KEY);
+        setOrderForm({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email: '',
+          address: '',
+          comment: ''
+        });
+        toast({ title: 'Заказ оформлен!', description: 'Скоро с вами свяжется наш менеджер' });
+      }, 3000);
+    }, 3000);
   };
 
   const handleAdminLogin = () => {
@@ -1147,7 +956,7 @@ const Index = () => {
               </div>
             </div>
           ) : (
-            <AdminPanel data={data} onSave={saveData} onExport={handleExport} onImport={handleImport} onReload={loadData} />
+            <AdminPanel data={data} onSave={saveData} onExport={handleExport} onImport={handleImport} />
           )}
         </DialogContent>
       </Dialog>
@@ -1395,83 +1204,13 @@ const Index = () => {
   );
 };
 
-const AdminPanel = ({ data, onSave, onExport, onImport, onReload }: {
+const AdminPanel = ({ data, onSave, onExport, onImport }: {
   data: AppData;
   onSave: (data: AppData) => void;
   onExport: () => void;
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onReload: () => Promise<void>;
 }) => {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('catalog');
-  const [saving, setSaving] = useState(false);
-  
-  const handleSaveToDatabase = async () => {
-    setSaving(true);
-    try {
-      const mappedServices = data.services.map(s => ({
-        title: s.name,
-        description: s.description || '',
-        price: '',
-        icon: 'Wrench'
-      }));
-      
-      const mappedArticles = data.articles.map(a => ({
-        title: a.title,
-        content: a.content,
-        image: a.imageUrl,
-        date: a.date
-      }));
-      
-      const mappedAbout = data.about.map(a => ({
-        title: a.title,
-        description: a.description,
-        icon: 'Info'
-      }));
-      
-      const mappedAdvantages = data.advantages.map(a => ({
-        title: a.title,
-        description: a.description,
-        icon: a.icon
-      }));
-      
-      const mappedPartners = data.partners.map(p => ({
-        name: p.name,
-        logo: p.logoUrl
-      }));
-      
-      const mappedHero = {
-        title: data.hero.title,
-        highlightedText: data.hero.highlightedText,
-        subtitle: data.hero.subtitle,
-        description: data.hero.description
-      };
-      
-      const response = await fetch('https://functions.poehali.dev/8181fa7b-ed7e-4e77-acb1-1f69039b9fd9?type=bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          services: mappedServices,
-          articles: mappedArticles,
-          about: mappedAbout,
-          advantages: mappedAdvantages,
-          partners: mappedPartners,
-          hero: mappedHero
-        })
-      });
-      
-      if (response.ok) {
-        toast({ title: 'Успех!', description: 'Все данные сохранены в базе данных' });
-        await onReload();
-      } else {
-        toast({ title: 'Ошибка', description: 'Не удалось сохранить данные', variant: 'destructive' });
-      }
-    } catch (error) {
-      toast({ title: 'Ошибка', description: 'Не удалось подключиться к серверу', variant: 'destructive' });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const addCategory = () => {
     const newCategory: Category = {
@@ -1621,29 +1360,17 @@ const AdminPanel = ({ data, onSave, onExport, onImport, onReload }: {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button 
-          onClick={handleSaveToDatabase} 
-          disabled={saving}
-          className="bg-primary hover:bg-primary/90 text-white font-bold"
-          size="lg"
-        >
-          <Icon name="Save" className="mr-2" size={20} />
-          {saving ? 'Сохранение...' : 'СОХРАНИТЬ В БАЗУ ДАННЫХ'}
-        </Button>
-      </div>
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-8">
-          <TabsTrigger value="home">Главная</TabsTrigger>
-          <TabsTrigger value="categories">Категории</TabsTrigger>
-          <TabsTrigger value="catalog">Каталог</TabsTrigger>
-          <TabsTrigger value="services">Услуги</TabsTrigger>
-          <TabsTrigger value="about">О компании</TabsTrigger>
-          <TabsTrigger value="articles">Статьи</TabsTrigger>
-          <TabsTrigger value="orders">Заказы</TabsTrigger>
-          <TabsTrigger value="data">Данные</TabsTrigger>
-        </TabsList>
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList className="grid w-full grid-cols-8">
+        <TabsTrigger value="home">Главная</TabsTrigger>
+        <TabsTrigger value="categories">Категории</TabsTrigger>
+        <TabsTrigger value="catalog">Каталог</TabsTrigger>
+        <TabsTrigger value="services">Услуги</TabsTrigger>
+        <TabsTrigger value="about">О компании</TabsTrigger>
+        <TabsTrigger value="articles">Статьи</TabsTrigger>
+        <TabsTrigger value="orders">Заказы</TabsTrigger>
+        <TabsTrigger value="data">Данные</TabsTrigger>
+      </TabsList>
 
       <TabsContent value="home" className="space-y-6">
         <div className="space-y-4">
@@ -2009,8 +1736,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport, onReload }: {
           </div>
         </div>
       </TabsContent>
-      </Tabs>
-    </div>
+    </Tabs>
   );
 };
 
