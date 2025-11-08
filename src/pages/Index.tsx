@@ -1222,7 +1222,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
   };
 
   const updateCategory = (id: string, field: keyof Category, value: string) => {
-    const updated = data.categories.map(c => c.id === id ? { ...c, [field]: value } : c);
+    const updated = data.categories?.filter(cat => cat).map(c => c.id === id ? { ...c, [field]: value } : c);
     onSave({ ...data, categories: updated });
   };
 
