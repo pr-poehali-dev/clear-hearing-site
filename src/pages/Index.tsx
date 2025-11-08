@@ -588,7 +588,7 @@ const Index = () => {
                   <Icon name="Grid" className="mr-2" size={18} />
                   Все категории
                 </Button>
-                {data.categories.map((category) => (
+                {data.categories?.filter(cat => cat).map((category) => (
                   <Button
                     key={category.id}
                     onClick={() => setSelectedCategoryId(category.id)}
@@ -1475,7 +1475,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
             Добавить категорию
           </Button>
         </div>
-        {data.categories.map((category) => (
+        {data.categories?.filter(cat => cat).map((category) => (
           <Card key={category.id} className="border-2">
             <CardContent className="pt-6 space-y-3">
               <div>
@@ -1516,7 +1516,7 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
                   className="w-full h-10 px-3 rounded-md border border-input bg-background"
                 >
                   <option value="">Без категории</option>
-                  {data.categories.map((cat) => (
+                  {data.categories?.map((cat) => cat && (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
