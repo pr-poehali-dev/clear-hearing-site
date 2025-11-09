@@ -1292,69 +1292,74 @@ const AdminPanel = ({ data, onSave, onExport, onImport }: {
   const saveToDatabase = async () => {
     setIsSaving(true);
     try {
+      const payload = {
+        categories: data.categories.map(c => ({
+          id: c.id,
+          name: c.name,
+          icon: c.icon
+        })),
+        products: data.products.map(p => ({
+          name: p.name,
+          imageUrl: p.imageUrl,
+          price: p.price,
+          description: p.description,
+          specs: p.specs,
+          categoryId: p.categoryId
+        })),
+        services: data.services.map(s => ({
+          name: s.name,
+          imageUrl: s.imageUrl,
+          contact: s.contact,
+          link: s.link,
+          description: s.description
+        })),
+        articles: data.articles.map(a => ({
+          title: a.title,
+          content: a.content,
+          imageUrl: a.imageUrl,
+          date: a.date
+        })),
+        about: data.about.map(ab => ({
+          title: ab.title,
+          description: ab.description
+        })),
+        advantages: data.advantages.map(ad => ({
+          icon: ad.icon,
+          title: ad.title,
+          description: ad.description
+        })),
+        partners: data.partners.map(p => ({
+          name: p.name,
+          logoUrl: p.logoUrl
+        })),
+        hero: {
+          title: data.hero.title,
+          highlightedText: data.hero.highlightedText,
+          subtitle: data.hero.subtitle,
+          description: data.hero.description,
+          imageUrl: data.hero.imageUrl
+        }
+      };
+
       const response = await fetch('https://functions.poehali.dev/53f4f863-66fb-4201-bc3a-49119b5b8e92?type=bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          categories: data.categories.map(c => ({
-            name: c.name,
-            icon: c.icon
-          })),
-          products: data.products.map(p => ({
-            name: p.name,
-            imageUrl: p.imageUrl,
-            price: p.price,
-            description: p.description,
-            specs: p.specs,
-            categoryId: p.categoryId
-          })),
-          services: data.services.map(s => ({
-            name: s.name,
-            imageUrl: s.imageUrl,
-            contact: s.contact,
-            link: s.link,
-            description: s.description
-          })),
-          articles: data.articles.map(a => ({
-            title: a.title,
-            content: a.content,
-            imageUrl: a.imageUrl,
-            date: a.date
-          })),
-          about: data.about.map(ab => ({
-            title: ab.title,
-            description: ab.description
-          })),
-          advantages: data.advantages.map(ad => ({
-            icon: ad.icon,
-            title: ad.title,
-            description: ad.description
-          })),
-          partners: data.partners.map(p => ({
-            name: p.name,
-            logoUrl: p.logoUrl
-          })),
-          hero: {
-            title: data.hero.title,
-            highlightedText: data.hero.highlightedText,
-            subtitle: data.hero.subtitle,
-            description: data.hero.description,
-            imageUrl: data.hero.imageUrl
-          }
-        })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save to database');
+        const errorText = await response.text();
+        console.error('Server error:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
       await loadData();
       toast({ title: 'Успешно сохранено!', description: 'Все изменения сохранены в базу данных для всех пользователей' });
     } catch (error) {
       console.error('Failed to save to database:', error);
-      toast({ title: 'Ошибка', description: 'Не удалось сохранить в базу данных', variant: 'destructive' });
+      toast({ title: 'Ошибка', description: `Не удалось сохранить в базу данных: ${error.message}`, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
